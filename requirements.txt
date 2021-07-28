@@ -1,0 +1,16 @@
+# python packages
+numpy
+pandas
+matplotlib
+
+NLTK
+spacy
+
+xlsxwriter
+ipykernel
+
+# formatting
+black
+
+# testing
+pytest
