@@ -1,0 +1,20 @@
+# Mac OS System Files
+.DS_Store
+
+# Python Files
+*__pycache__
+*.pytest_cache
+*.pyc
+
+# VS Code Files
+.vscode/
+*.code-workspace
+
+# Jupyter Notebook Files
+.ipynb_checkpoints/
+.ipynb_checkpoints
+
+# Other
+venv
+*.xml
+*.iml
