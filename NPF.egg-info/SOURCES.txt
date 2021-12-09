@@ -1,6 +1,16 @@
+.gitignore
+.python-version
 README.md
+our_names.txt
+requirements.txt
 setup.py
 NPF.egg-info/PKG-INFO
 NPF.egg-info/SOURCES.txt
 NPF.egg-info/dependency_links.txt
 NPF.egg-info/top_level.txt
+NPF/library/__init__.py
+NPF/library/classify.py
+NPF/teachers_and_covid/explore_classifiers.py
+NPF/teachers_and_covid/start.py
+NPF/teachers_and_covid/topic_modelling.py
+NPF/tests/__init__.py

@@ -10,6 +10,8 @@ python-twitter
 xlsxwriter
 ipykernel
 
+Scikit-learn
+
 # formatting
 black
 
