@@ -16,8 +16,33 @@ from sklearn.naive_bayes import BernoulliNB
 from sklearn.linear_model import LogisticRegression
 
 # %%
-df = pd.read_csv(start.MAIN_DIR + "training_batch1_annotated.csv")
-df = df[(df.relevant == 0) | (df.relevant == 1)]
+tweets = pd.read_csv(start.MAIN_DIR + "tweets_full.csv")
+tweets = tweets[
+    [
+        "unique_id",
+        "text",
+        "created",
+        "likes",
+        "retweets",
+        "quotes",
+        "replies",
+        "author_id",
+        "geo",
+        "random_set",
+    ]
+]
+# %%
+annotations1 = pd.read_csv(
+    start.MAIN_DIR + "training_batch1_annotated.csv", encoding="utf-8’"
+)
+annotations2 = pd.read_csv(
+    start.MAIN_DIR + "training_batch2_annotated.csv", encoding="utf-8’"
+)
+
+annotations = pd.concat([annotations1, annotations2])
+
+# %%
+df = annotations[(annotations.relevant == 0) | (annotations.relevant == 1)]
 df.sample(len(df), random_state=67)
 testing = df.head(150)
 training = df.tail(len(df) - 150)
