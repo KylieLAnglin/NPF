@@ -10,8 +10,7 @@ from functools import reduce
 
 import nltk
 import gensim
-from nltk.tokenize import TweetTokenizer
-
+from nltk.tokenize import word_tokenize
 
 # %%
 tweets = pd.read_csv(start.MAIN_DIR + "tweets_full.csv")
@@ -29,8 +28,10 @@ tweets = tweets[
         "random_set",
     ]
 ]
+tweets["text"] = tweets["text"].str.replace("&amp;", "&")
+tweets["text"] = tweets["text"].str.replace("#", "")  # remove hashtag
 
-tweets = tweets.sample(500, random_state=352)
+# tweets = tweets.sample(1000, random_state=352)
 
 # %%
 df = tweets
@@ -40,22 +41,30 @@ text_corpus = list(df.text)
 # %%
 # Stop words
 stoplist = set(
-    "for a of the and to in are our is this that with not have be their it on they so we i you all &amp; my your who do as but how will from".split(
+    "i me my we our ours you your yours he him his she her hers it its they them their theris what which who this that these those am is are was were be been being have has had having do does did doing a an the and but if or as of at by for with to from thenall any both s will just on all like in so how".split(
         " "
     )
 )
-
 num_topics = 10
 num_words_to_view = 10
-passes = 2
+passes = 1
 
 # %%
+
+
 texts = [
-    [word for word in document.lower().split() if word not in stoplist]
+    [
+        word
+        for word in document.lower().split()
+        if (word not in stoplist) & (word.isalnum())
+    ]
     for document in text_corpus
 ]
+
+
 # %%
 dictionary = corpora.Dictionary(texts)
+dictionary.filter_extremes(no_below=5, no_above=0.4, keep_n=500)
 corpus = [dictionary.doc2bow(text) for text in texts]
 lda = LdaModel(
     corpus, id2word=dictionary, num_topics=num_topics, passes=passes, random_state=4
