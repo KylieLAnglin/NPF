@@ -13,6 +13,20 @@ import gensim
 from nltk.tokenize import word_tokenize
 
 # %%
+STOPLIST = set(
+    "https i me my we our ours you your yours he him his she her hers it its they them their theris what which who this that these those am is are was were be been being have has had having do does did doing a an the and but if or as of at by for with to from thenall any both s will just on all like in so how".split(
+        " "
+    )
+)
+NUM_TOPICS = 10
+NUM_WORDS_TO_VIEW = 10
+PASSES = 1
+DROP_FREQ_BELOW = 10
+DROP_FREQ_ABOVE = 0.5
+KEEP_TOP = 2000
+
+
+# %%
 tweets = pd.read_csv(start.MAIN_DIR + "tweets_full.csv")
 tweets = tweets[
     [
@@ -39,15 +53,6 @@ list(df.head(1).text)
 text_corpus = list(df.text)
 
 # %%
-# Stop words
-stoplist = set(
-    "i me my we our ours you your yours he him his she her hers it its they them their theris what which who this that these those am is are was were be been being have has had having do does did doing a an the and but if or as of at by for with to from thenall any both s will just on all like in so how".split(
-        " "
-    )
-)
-num_topics = 10
-num_words_to_view = 10
-passes = 1
 
 # %%
 
@@ -56,7 +61,7 @@ texts = [
     [
         word
         for word in document.lower().split()
-        if (word not in stoplist) & (word.isalnum())
+        if (word not in STOPLIST) & (word.isalnum())
     ]
     for document in text_corpus
 ]
@@ -64,13 +69,15 @@ texts = [
 
 # %%
 dictionary = corpora.Dictionary(texts)
-dictionary.filter_extremes(no_below=5, no_above=0.4, keep_n=500)
+dictionary.filter_extremes(
+    no_below=DROP_FREQ_BELOW, no_above=DROP_FREQ_ABOVE, keep_n=KEEP_TOP
+)
 corpus = [dictionary.doc2bow(text) for text in texts]
 lda = LdaModel(
-    corpus, id2word=dictionary, num_topics=num_topics, passes=passes, random_state=4
+    corpus, id2word=dictionary, num_topics=NUM_TOPICS, passes=PASSES, random_state=4
 )
 # %%
-lda.print_topics(num_words=num_words_to_view)
+lda.print_topics(num_words=NUM_WORDS_TO_VIEW)
 
 # %%
 lda.get_document_topics(corpus[0], minimum_probability=0)
@@ -78,7 +85,7 @@ lda.get_document_topics(corpus[0], minimum_probability=0)
 # %% Create topic tables
 list_of_topic_tables = []
 for topic in lda.show_topics(
-    num_topics=num_topics, num_words=num_words_to_view, formatted=False
+    num_topics=NUM_TOPICS, num_words=NUM_WORDS_TO_VIEW, formatted=False
 ):
     list_of_topic_tables.append(
         pd.DataFrame(
@@ -106,7 +113,7 @@ topic_probs = [
     for doc in corpus
 ]
 # %%
-topic_probs_df = pd.DataFrame(topic_probs, columns=list(np.arange(0, num_topics)))
+topic_probs_df = pd.DataFrame(topic_probs, columns=list(np.arange(0, NUM_TOPICS)))
 tweets_topics = (
     tweets[["unique_id", "text"]]
     .reset_index()
