@@ -32,18 +32,28 @@ tweets = tweets[
     ]
 ]
 # %%
-annotations1 = pd.read_csv(
-    start.MAIN_DIR + "training_batch1_annotated.csv", encoding="utf-8’"
-)
-annotations2 = pd.read_csv(
-    start.MAIN_DIR + "training_batch2_annotated.csv", encoding="utf-8’"
-)
+annotations = pd.read_csv(start.MAIN_DIR + "annotations.csv")
 
-annotations = pd.concat([annotations1, annotations2])
+annotations = annotations[
+    [
+        "unique_id",
+        "tweet_id",
+        "random_set",
+        "relevant",
+        "category",
+        "covid",
+        "character",
+    ]
+]
 
+df = annotations.merge(
+    tweets[["unique_id", "text"]],
+    how="left",
+    left_on="unique_id",
+    right_on="unique_id",
+)
 # %%
-df = annotations[(annotations.relevant == 0) | (annotations.relevant == 1)]
-df.sample(len(df), random_state=67)
+df = df.sample(len(annotations), random_state=67)
 testing = df.head(150)
 training = df.tail(len(df) - 150)
 

@@ -52,14 +52,12 @@ annotations.category.value_counts()
 
 
 # %%
-annotations[annotations.random_set == 3]["Covid policy related"].value_counts()
+annotations[annotations.random_set == 3]["covid"].value_counts()
 
 # %%
-annotations[annotations.random_set == 3]["Teacher character"].value_counts()
+annotations[annotations.random_set == 3]["character"].value_counts()
 # %%
-pd.crosstab(
-    index=annotations["Covid policy related"], columns=annotations["Teacher character"]
-)
+pd.crosstab(index=annotations["covid"], columns=annotations["character"])
 # %%
 annotations.to_csv(start.MAIN_DIR + "annotations.csv")
 
