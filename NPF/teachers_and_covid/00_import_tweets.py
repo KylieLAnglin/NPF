@@ -38,8 +38,6 @@ df_to_code = df[df.random_set == 1]
 df_to_code = df_to_code[
     ["unique_id", "tweet_id", "random_set", "text", "relevant", "category", "notes"]
 ]
-
-
 df_to_code.to_csv(
     "/Volumes/GoogleDrive/.shortcut-targets-by-id/1wL0tiiBznVSn5Gij9hYTiC6HTPCExAn8/Policy Narratives and NLP/Data and Code/training_batch1.csv"
 )
@@ -52,3 +50,13 @@ df_to_code = df_to_code[
 df_to_code.to_csv(
     "/Volumes/GoogleDrive/.shortcut-targets-by-id/1wL0tiiBznVSn5Gij9hYTiC6HTPCExAn8/Policy Narratives and NLP/Data and Code/training_batch2.csv"
 )
+
+df_to_code = df[df.random_set == 3]
+df_to_code = df_to_code[
+    ["unique_id", "tweet_id", "random_set", "text", "relevant", "category", "notes"]
+]
+df_to_code.to_csv(
+    "/Volumes/GoogleDrive/.shortcut-targets-by-id/1wL0tiiBznVSn5Gij9hYTiC6HTPCExAn8/Policy Narratives and NLP/Data and Code/training_batch3.csv"
+)
+
+# %%
