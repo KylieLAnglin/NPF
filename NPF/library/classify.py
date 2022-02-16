@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 
 
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
 # %%
 def accuracy_stats(df: pd.DataFrame, classification_col: str, ground_truth_col: str):
     df["accurate"] = np.where(df[classification_col] == df[ground_truth_col], 1, 0)
@@ -36,8 +37,6 @@ def accuracy_stats(df: pd.DataFrame, classification_col: str, ground_truth_col: 
     except:
         print("No positive classifications.")
         return accuracy
-
-
 
 
 def test_set_check(identifier, test_ratio):
@@ -61,7 +60,9 @@ def create_plot_confusion_matrix(cf_matrix):
         for v1, v2, v3 in zip(group_names, group_counts, group_percentages)
     ]
     labels = np.asarray(labels).reshape(2, 2)
-    sns.heatmap(cf_matrix, annot=labels, fmt="", cmap="Blues")
+    ax = sns.heatmap(cf_matrix, annot=labels, fmt="", cmap="Blues")
+    ax.set(xlabel="Model Classification", ylabel="True Classification")
+    plt.show
 
 
 def grid_search(pipeline, parameters, X, y, n_iter=1000):
@@ -125,3 +126,192 @@ def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
     plt.xlabel("Threshold")
 
     plt.show()
+
+
+stop_words = [
+    "i",
+    "me",
+    "my",
+    "myself",
+    "we",
+    "our",
+    "ours",
+    "ourselves",
+    "you",
+    "your",
+    "yours",
+    "yourself",
+    "yourselves",
+    "he",
+    "him",
+    "his",
+    "himself",
+    "she",
+    "her",
+    "hers",
+    "herself",
+    "it",
+    "its",
+    "itself",
+    "they",
+    "them",
+    "their",
+    "theirs",
+    "themselves",
+    "what",
+    "which",
+    "who",
+    "whom",
+    "this",
+    "that",
+    "these",
+    "those",
+    "am",
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "been",
+    "being",
+    "have",
+    "has",
+    "had",
+    "having",
+    "do",
+    "does",
+    "did",
+    "doing",
+    "a",
+    "an",
+    "the",
+    "and",
+    "but",
+    "if",
+    "or",
+    "because",
+    "as",
+    "until",
+    "while",
+    "of",
+    "at",
+    "by",
+    "for",
+    "with",
+    "about",
+    "against",
+    "between",
+    "into",
+    "through",
+    # "during",
+    # "before",
+    # "after",
+    "above",
+    "below",
+    "to",
+    "from",
+    "up",
+    "down",
+    "in",
+    "out",
+    "on",
+    "off",
+    "over",
+    "under",
+    "again",
+    "further",
+    "then",
+    "once",
+    "here",
+    "there",
+    "when",
+    "where",
+    "why",
+    "how",
+    "all",
+    "any",
+    "both",
+    "each",
+    "few",
+    "more",
+    "most",
+    "other",
+    "some",
+    "such",
+    "no",
+    "nor",
+    "not",
+    "only",
+    "own",
+    "same",
+    "so",
+    "than",
+    "too",
+    "very",
+    "s",
+    "t",
+    "can",
+    "will",
+    "just",
+    "don",
+    "should",
+    "now",
+    "https",
+    "amp",
+]
+
+
+def print_statistics(
+    classification,
+    ground_truth,
+    model_name: str,
+    file_name="",
+):
+
+    accuracy = accuracy_score(y_true=ground_truth, y_pred=classification)
+    precision = precision_score(y_true=ground_truth, y_pred=classification)
+    recall = recall_score(y_true=ground_truth, y_pred=classification)
+    f1 = f1_score(y_true=ground_truth, y_pred=classification)
+
+    print(
+        "Accuracy = ",
+        str(round(accuracy, 2)),
+    )
+
+    print(
+        "Precision = ",
+        str(round(precision, 2)),
+    )
+
+    print(
+        "Recall = ",
+        str(round(recall, 2)),
+    )
+
+    print(
+        "F1 = ",
+        str(round(f1, 2)),
+    )
+
+    if file_name != "":
+        file_object = open(file_name, "a")
+        file_object.write(model_name)
+
+        file_object.write("\n")
+        file_object.write("Accuracy = " + str(round(accuracy, 2)))
+        file_object.write("\n")
+
+        file_object.write("Precision = " + str(round(precision, 2)))
+        file_object.write("\n")
+
+        file_object.write(
+            "Recall = " + str(round(recall, 2)),
+        )
+        file_object.write("\n")
+
+        file_object.write("F1 = " + str(round(f1, 2)))
+        file_object.write("\n")
+        file_object.write("\n")
+        file_object.write("\n")
+
+        file_object.close()

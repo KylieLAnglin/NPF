@@ -36,7 +36,12 @@ annotations3 = pd.read_csv(
     start.MAIN_DIR + "annotations/training_batch3_annotated.csv", encoding="utf-8"
 )
 
-annotations = pd.concat([annotations1, annotations2, annotations3])
+annotations4 = pd.read_csv(
+    start.MAIN_DIR + "annotations/training_batch4_annotated.csv", encoding="utf-8"
+)
+
+
+annotations = pd.concat([annotations1, annotations2, annotations3, annotations4])
 
 # %%
 annotations = annotations[~annotations.relevant.isnull()]

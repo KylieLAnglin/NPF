@@ -1,17 +1,17 @@
 # %%
+from cgi import test
 import re
 import pandas as pd
 import numpy as np
 
 
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn import svm
 from sklearn.linear_model import SGDClassifier
-from sklearn.metrics import precision_recall_curve
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score, precision_recall_curve, confusion_matrix
 
 from NPF.teachers_and_covid import start
 from NPF.library import classify
@@ -143,17 +143,20 @@ classify.print_statistics(
 clf = LogisticRegression(penalty="l2")
 clf = clf.fit(train_matrix, training.relevant)
 
-testing["classification_lasso"] = clf.predict(test_matrix)
-training["classification_lasso"] = clf.predict(train_matrix)
+testing["classification_ridge"] = clf.predict(test_matrix)
+training["classification_ridge"] = clf.predict(train_matrix)
 
 print("")
-print("Lasso Classifier")
+print("Ridge Classifier")
 classify.print_statistics(
-    classification=testing.classification_lasso,
+    classification=testing.classification_ridge,
     ground_truth=testing.relevant,
-    model_name="Lasso Classifier",
+    model_name="Ridge Classifier",
     file_name=FILE_NAME,
 )
+
+cf_matrix = confusion_matrix(testing.relevant, testing.classification_ridge)
+classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
 
 
 # %% SVM with Threshold
@@ -163,7 +166,7 @@ precisions, recalls, thresholds = precision_recall_curve(
     training.relevant, clf.decision_function(train_matrix)
 )
 
-threshold_recall = thresholds[np.argmax(recalls >= 0.80)]
+threshold_recall = thresholds[np.argmax(recalls >= 0.85)]
 
 testing["classification_svm_recall"] = (
     clf.decision_function(test_matrix) >= threshold_recall
@@ -180,3 +183,73 @@ classify.print_statistics(
     model_name="SVM Classifier with Threshold",
     file_name=FILE_NAME,
 )
+
+
+# %%
+
+# %% Bernoulli Naive Bayes
+clf = BernoulliNB()
+clf = clf.fit(train_matrix, training.relevant)
+
+probas = [proba[1] for proba in clf.predict_proba(train_matrix)]
+precisions, recalls, thresholds = precision_recall_curve(training.relevant, probas)
+threshold_recall = thresholds[np.argmax(recalls >= 0.70)]
+
+testing["classification_nb_recall"] = [
+    proba[1] for proba in clf.predict_proba(test_matrix)
+] >= threshold_recall
+training["classification_nb_recall"] = [
+    proba[1] for proba in clf.predict_proba(train_matrix)
+] >= threshold_recall
+
+print("")
+print("Naive Bayes Classifier with Threshold")
+classify.print_statistics(
+    classification=testing.classification_nb_recall,
+    ground_truth=testing.relevant,
+    model_name="Naive Bayes Classifier with Threshold",
+    file_name=FILE_NAME,
+)
+
+# %%
+
+# %% Ridge
+clf = LogisticRegression(penalty="l2")
+clf = clf.fit(train_matrix, training.relevant)
+
+probas = [proba[1] for proba in clf.predict_proba(train_matrix)]
+precisions, recalls, thresholds = precision_recall_curve(training.relevant, probas)
+threshold_recall = thresholds[np.argmax(recalls >= 0.70)]
+
+
+testing["classification_ridge_recall"] = [
+    proba[1] for proba in clf.predict_proba(test_matrix)
+] >= threshold_recall
+training["classification_ridge_recall"] = [
+    proba[1] for proba in clf.predict_proba(train_matrix)
+] >= threshold_recall
+
+training["classification_ridge_recall_score"] = [
+    proba[1] for proba in clf.predict_proba(train_matrix)
+]
+
+testing["classification_ridge_recall_score"] = [
+    proba[1] for proba in clf.predict_proba(test_matrix)
+]
+
+print("")
+print("Ridge Classifier with Threshold")
+classify.print_statistics(
+    classification=testing.classification_ridge_recall,
+    ground_truth=testing.relevant,
+    model_name="Ridge Classifier with Threshold",
+    file_name=FILE_NAME,
+)
+
+cf_matrix = confusion_matrix(testing.relevant, testing.classification_ridge_recall)
+classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
+
+
+roc_auc_score(testing.relevant, [proba[1] for proba in clf.predict_proba(test_matrix)])
+
+# %%
