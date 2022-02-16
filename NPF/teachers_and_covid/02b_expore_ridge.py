@@ -136,7 +136,35 @@ feature_importance_df.to_csv(start.MAIN_DIR + "feature_importance_ridge.csv")
 
 f1s = []
 recalls = []
-sizes = [500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2400, 2500, 2600, 2750, 3000]
+sizes = [
+    500,
+    600,
+    700,
+    800,
+    900,
+    1000,
+    1100,
+    1200,
+    1300,
+    1400,
+    1500,
+    1600,
+    1700,
+    1800,
+    1900,
+    2000,
+    2100,
+    2200,
+    2300,
+    2400,
+    2500,
+    2600,
+    2700,
+    2800,
+    2900,
+    3000,
+    3100,
+]
 for size in sizes:
     clf_size = pipeline.fit(
         training.text.sample(size, random_state=4),
