@@ -1,4 +1,5 @@
 # %%
+import re
 import pandas as pd
 import numpy as np
 from NPF.teachers_and_covid import start

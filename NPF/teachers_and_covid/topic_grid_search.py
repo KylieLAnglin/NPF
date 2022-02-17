@@ -91,6 +91,3 @@ for i in NUM_TOPICS:
                 folder_path=newpath,
             )
 pbar.close()
-
-
-# %%

@@ -128,6 +128,62 @@ def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
     plt.show()
 
 
+def print_statistics(
+    classification,
+    ground_truth,
+    model_name: str,
+    file_name="",
+):
+
+    accuracy = accuracy_score(y_true=ground_truth, y_pred=classification)
+    precision = precision_score(y_true=ground_truth, y_pred=classification)
+    recall = recall_score(y_true=ground_truth, y_pred=classification)
+    f1 = f1_score(y_true=ground_truth, y_pred=classification)
+
+    print(
+        "Accuracy = ",
+        str(round(accuracy, 2)),
+    )
+
+    print(
+        "Precision = ",
+        str(round(precision, 2)),
+    )
+
+    print(
+        "Recall = ",
+        str(round(recall, 2)),
+    )
+
+    print(
+        "F1 = ",
+        str(round(f1, 2)),
+    )
+
+    if file_name != "":
+        file_object = open(file_name, "a")
+        file_object.write(model_name)
+
+        file_object.write("\n")
+        file_object.write("Accuracy = " + str(round(accuracy, 2)))
+        file_object.write("\n")
+
+        file_object.write("Precision = " + str(round(precision, 2)))
+        file_object.write("\n")
+
+        file_object.write(
+            "Recall = " + str(round(recall, 2)),
+        )
+        file_object.write("\n")
+
+        file_object.write("F1 = " + str(round(f1, 2)))
+        file_object.write("\n")
+        file_object.write("\n")
+        file_object.write("\n")
+
+        file_object.close()
+
+
 stop_words = [
     "i",
     "me",
@@ -258,60 +314,7 @@ stop_words = [
     "now",
     "https",
     "amp",
+    "co",
+    "th",
+    "&",
 ]
-
-
-def print_statistics(
-    classification,
-    ground_truth,
-    model_name: str,
-    file_name="",
-):
-
-    accuracy = accuracy_score(y_true=ground_truth, y_pred=classification)
-    precision = precision_score(y_true=ground_truth, y_pred=classification)
-    recall = recall_score(y_true=ground_truth, y_pred=classification)
-    f1 = f1_score(y_true=ground_truth, y_pred=classification)
-
-    print(
-        "Accuracy = ",
-        str(round(accuracy, 2)),
-    )
-
-    print(
-        "Precision = ",
-        str(round(precision, 2)),
-    )
-
-    print(
-        "Recall = ",
-        str(round(recall, 2)),
-    )
-
-    print(
-        "F1 = ",
-        str(round(f1, 2)),
-    )
-
-    if file_name != "":
-        file_object = open(file_name, "a")
-        file_object.write(model_name)
-
-        file_object.write("\n")
-        file_object.write("Accuracy = " + str(round(accuracy, 2)))
-        file_object.write("\n")
-
-        file_object.write("Precision = " + str(round(precision, 2)))
-        file_object.write("\n")
-
-        file_object.write(
-            "Recall = " + str(round(recall, 2)),
-        )
-        file_object.write("\n")
-
-        file_object.write("F1 = " + str(round(f1, 2)))
-        file_object.write("\n")
-        file_object.write("\n")
-        file_object.write("\n")
-
-        file_object.close()
