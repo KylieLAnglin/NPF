@@ -63,7 +63,18 @@ for text in testing.text:
     doc = nlp(text)
     categories.append(doc.cats)
 
-# %%
 testing["classification"] = [label["POSITIVE"] for label in categories]
 testing.to_csv(MAIN_DIR + "testing_spacy.csv")
 # %%
+
+model_dir = "/Users/kla21002/textcat_tweets/packages/en_textcat_demo-0.0.0/en_textcat_demo/en_textcat_demo-0.0.0"
+# apply the saved model
+print("Loading from", model_dir)
+nlp = spacy.load(model_dir)
+categories = []
+for text in training.text:
+    doc = nlp(text)
+    categories.append(doc.cats)
+
+training["classification"] = [label["POSITIVE"] for label in categories]
+training.to_csv(MAIN_DIR + "training_spacy.csv")

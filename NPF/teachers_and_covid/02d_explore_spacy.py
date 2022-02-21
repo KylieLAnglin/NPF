@@ -12,6 +12,7 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     confusion_matrix,
+    accuracy_score,
 )
 
 from NPF.teachers_and_covid import start
@@ -27,12 +28,15 @@ classify.create_plot_confusion_matrix(
 )
 recall_score(testing.relevant, testing.classification)
 precision_score(testing.relevant, testing.classification)
+accuracy_score(testing.relevant, testing.classification)
 
-
+# %%
 testing["classification_recall"] = np.where(testing.score > 0.25, 1, 0)
 classify.create_plot_confusion_matrix(
     cf_matrix=confusion_matrix(testing.relevant, testing.classification_recall)
 )
 recall_score(testing.relevant, testing.classification_recall)
 precision_score(testing.relevant, testing.classification_recall)
+accuracy_score(testing.relevant, testing.classification_recall)
+
 # %%

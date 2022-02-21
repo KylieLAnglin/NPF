@@ -80,6 +80,10 @@ clf = clf.fit(train_matrix, training.relevant)
 
 
 testing["classification_svm"] = clf.predict(test_matrix)
+testing["score_svm"] = clf.decision_function(test_matrix)
+
+training["classification_csv"] = clf.predict(train_matrix)
+training["score_svm"] = clf.decision_function(train_matrix)
 
 print("")
 print("SVM Classifier")
@@ -96,7 +100,10 @@ clf = SGDClassifier(random_state=87)
 clf = clf.fit(train_matrix, training.relevant)
 
 testing["classification_sgd"] = clf.predict(test_matrix)
+testing["score_sgd"] = clf.decision_function(test_matrix)
+
 training["classification_sgd"] = clf.predict(train_matrix)
+training["score_sgd"] = clf.decision_function(train_matrix)
 
 print("")
 print("SGD Classifier")
@@ -113,7 +120,10 @@ clf = RandomForestClassifier(random_state=2)
 clf = clf.fit(train_matrix, training.relevant)
 
 testing["classification_rf"] = clf.predict(test_matrix)
+testing["score_rf"] = [proba[1] for proba in clf.predict_proba(test_matrix)]
+
 training["classification_rf"] = clf.predict(train_matrix)
+training["score_rf"] = [proba[1] for proba in clf.predict_proba(train_matrix)]
 
 print("")
 print("Random Forest Classifier")
@@ -129,7 +139,11 @@ clf = BernoulliNB()
 clf = clf.fit(train_matrix, training.relevant)
 
 testing["classification_nb"] = clf.predict(test_matrix)
+testing["score_nb"] = [proba[1] for proba in clf.predict_proba(test_matrix)]
+
+
 training["classification_nb"] = clf.predict(train_matrix)
+training["score_nb"] = [proba[1] for proba in clf.predict_proba(train_matrix)]
 
 print("Naive Bayes")
 classify.print_statistics(
@@ -144,7 +158,10 @@ clf = LogisticRegression(penalty="l2")
 clf = clf.fit(train_matrix, training.relevant)
 
 testing["classification_ridge"] = clf.predict(test_matrix)
+testing["score_ridge"] = [proba[1] for proba in clf.predict_proba(test_matrix)]
+
 training["classification_ridge"] = clf.predict(train_matrix)
+training["score_ridge"] = [proba[1] for proba in clf.predict_proba(train_matrix)]
 
 print("")
 print("Ridge Classifier")
@@ -253,3 +270,5 @@ classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
 roc_auc_score(testing.relevant, [proba[1] for proba in clf.predict_proba(test_matrix)])
 
 # %%
+training.to_csv(start.MAIN_DIR + "training_models.csv")
+testing.to_csv(start.MAIN_DIR + "testing_models.csv")
