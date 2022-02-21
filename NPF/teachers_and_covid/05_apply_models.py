@@ -65,6 +65,7 @@ tweets["text"] = [re.sub(r"[^\w\s]", "", s) for s in tweets.text]  # remove punc
 tweets["text"] = tweets.text.str.replace("\n", " ", regex=False)  # remove new line
 tweets["text"] = tweets.text.str.replace("\xa0", " ", regex=False)  # remove utf errors
 
+tweets = tweets[tweets.unique_id != 186803]
 tweets = tweets.merge(
     spacy_df[["unique_id", "score_spacy"]], left_on="unique_id", right_on="unique_id"
 )
