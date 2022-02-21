@@ -98,7 +98,7 @@ precisions, recalls, thresholds = precision_recall_curve(
 )
 classify.plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
 
-threshold_recall = thresholds[np.argmin(recalls >= 0.75)]
+threshold_recall = thresholds[np.argmin(recalls >= 0.8)]
 
 testing["classification_score"] = clf.decision_function(testing.text)
 testing["classification_threshold"] = (
