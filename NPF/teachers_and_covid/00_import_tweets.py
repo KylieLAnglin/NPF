@@ -17,7 +17,7 @@ df["unique_id"] = df["set"].astype("str") + df.index.astype("str")
 len(df)
 
 df = df.sample(len(df), random_state=100)
-
+# %%
 
 np.random.seed(5)
 df["random_set"] = np.random.randint(1, 300, size=len(df))
