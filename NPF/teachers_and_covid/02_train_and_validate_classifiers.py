@@ -3,7 +3,7 @@ from cgi import test
 import re
 import pandas as pd
 import numpy as np
-
+import pickle
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import svm
@@ -94,6 +94,8 @@ classify.print_statistics(
     file_name=FILE_NAME,
 )
 
+pickle.dump(clf, open(start.MAIN_DIR + "model_svm", "wb"))
+
 # %% Stochastic Gradient Descent
 
 clf = SGDClassifier(random_state=87)
@@ -113,6 +115,7 @@ classify.print_statistics(
     model_name="SGD Classifier",
     file_name=FILE_NAME,
 )
+pickle.dump(clf, open(start.MAIN_DIR + "model_sgd", "wb"))
 
 
 # %% Random Forest
@@ -133,6 +136,7 @@ classify.print_statistics(
     model_name="Random Forest Classifier",
     file_name=FILE_NAME,
 )
+pickle.dump(clf, open(start.MAIN_DIR + "model_rf", "wb"))
 
 # %% Bernoulli Naive Bayes
 clf = BernoulliNB()
@@ -152,6 +156,7 @@ classify.print_statistics(
     model_name="Naive Bayes",
     file_name=FILE_NAME,
 )
+pickle.dump(clf, open(start.MAIN_DIR + "model_nb", "wb"))
 
 # %%
 clf = LogisticRegression(penalty="l2")
@@ -175,6 +180,7 @@ classify.print_statistics(
 cf_matrix = confusion_matrix(testing.relevant, testing.classification_ridge)
 classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
 
+pickle.dump(clf, open(start.MAIN_DIR + "model_ridge", "wb"))
 
 # %% SVM with Threshold
 clf = svm.LinearSVC()
