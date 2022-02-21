@@ -24,6 +24,10 @@ tweets = tweets[
         "random_set",
     ]
 ]
+tweets["text"] = [re.sub(r"[^\w\s]", "", s) for s in tweets.text]  # remove punctuation
+tweets["text"] = tweets.text.str.replace("\n", " ", regex=False)  # remove new line
+tweets["text"] = tweets.text.str.replace("\xa0", " ", regex=False)  # remove utf errors
+
 annotations = pd.read_csv(MAIN_DIR + "annotations.csv")
 annotations = annotations[
     [
@@ -46,12 +50,8 @@ df = annotations.merge(
 
 df["labels"] = np.where(df.relevant == 1, "POSITIVE", "NEGATIVE")
 
-df["text"] = [re.sub(r"[^\w\s]", "", s) for s in df.text]  # remove punctuation
-df["text"] = df.text.str.replace("\n", " ", regex=False)  # remove new line
-df["text"] = df.text.str.replace("\xa0", " ", regex=False)  # remove utf errors
 training = df[df.random_set != 3]
 testing = df[df.random_set == 3]
-
 
 # %%
 model_dir = "/Users/kla21002/textcat_tweets/packages/en_textcat_demo-0.0.0/en_textcat_demo/en_textcat_demo-0.0.0"
@@ -67,7 +67,6 @@ testing["classification"] = [label["POSITIVE"] for label in categories]
 testing.to_csv(MAIN_DIR + "testing_spacy.csv")
 # %%
 
-model_dir = "/Users/kla21002/textcat_tweets/packages/en_textcat_demo-0.0.0/en_textcat_demo/en_textcat_demo-0.0.0"
 # apply the saved model
 print("Loading from", model_dir)
 nlp = spacy.load(model_dir)
@@ -78,3 +77,17 @@ for text in training.text:
 
 training["classification"] = [label["POSITIVE"] for label in categories]
 training.to_csv(MAIN_DIR + "training_spacy.csv")
+
+
+# %%
+
+# apply the saved model
+print("Loading from", model_dir)
+nlp = spacy.load(model_dir)
+categories = []
+for text in tweets.text:
+    doc = nlp(text)
+    categories.append(doc.cats)
+
+tweets["score_spacy"] = [label["POSITIVE"] for label in categories]
+tweets.to_csv(MAIN_DIR + "model_spacy.csv")

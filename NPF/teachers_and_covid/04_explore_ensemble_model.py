@@ -2,6 +2,7 @@
 from re import S
 import pandas as pd
 from pyparsing import col
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, precision_recall_curve, confusion_matrix
 
