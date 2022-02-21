@@ -12,6 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, precision_recall_curve, confusion_matrix
+from sklearn.pipeline import Pipeline
 
 from NPF.teachers_and_covid import start
 from NPF.library import classify
@@ -75,15 +76,30 @@ test_matrix = count_vect.transform(testing.text)
 test_matrix.shape
 
 # %% SVM
-clf = svm.LinearSVC()
-clf = clf.fit(train_matrix, training.relevant)
+pipeline = Pipeline(
+    [
+        (
+            "vect",
+            CountVectorizer(
+                strip_accents="unicode",
+                stop_words=classify.stop_words,
+                ngram_range=(1, 3),
+                min_df=10,
+            ),
+        ),
+        ("clf", svm.LinearSVC()),
+    ],
+)
 
 
-testing["classification_svm"] = clf.predict(test_matrix)
-testing["score_svm"] = clf.decision_function(test_matrix)
+clf = pipeline.fit(training.text, training.relevant)
 
-training["classification_csv"] = clf.predict(train_matrix)
-training["score_svm"] = clf.decision_function(train_matrix)
+
+testing["classification_svm"] = clf.predict(testing.text)
+testing["score_svm"] = clf.decision_function(testing.text)
+
+training["classification_csv"] = clf.predict(training.text)
+training["score_svm"] = clf.decision_function(training.text)
 
 print("")
 print("SVM Classifier")
@@ -94,18 +110,53 @@ classify.print_statistics(
     file_name=FILE_NAME,
 )
 
-pickle.dump(clf, open(start.MAIN_DIR + "model_svm", "wb"))
+pickle.dump(clf, open(start.MAIN_DIR + "model_svm.sav", "wb"))
+
+precisions, recalls, thresholds = precision_recall_curve(
+    training.relevant, clf.decision_function(training.text)
+)
+
+threshold_recall = thresholds[np.argmax(recalls >= 0.85)]
+
+testing["classification_svm_recall"] = (
+    clf.decision_function(testing.text) >= threshold_recall
+)
+training["classification_svm_recall"] = (
+    clf.decision_function(training.text) >= threshold_recall
+)
+
+print("")
+print("SVM Classifier with Threshold")
+classify.print_statistics(
+    classification=testing.classification_svm_recall,
+    ground_truth=testing.relevant,
+    model_name="SVM Classifier with Threshold",
+    file_name=FILE_NAME,
+)
+
 
 # %% Stochastic Gradient Descent
+pipeline = Pipeline(
+    [
+        (
+            "vect",
+            CountVectorizer(
+                strip_accents="unicode",
+                stop_words=classify.stop_words,
+                ngram_range=(1, 3),
+                min_df=10,
+            ),
+        ),
+        ("clf", SGDClassifier(random_state=87)),
+    ],
+)
+clf = pipeline.fit(training.text, training.relevant)
 
-clf = SGDClassifier(random_state=87)
-clf = clf.fit(train_matrix, training.relevant)
+testing["classification_sgd"] = clf.predict(testing.text)
+testing["score_sgd"] = clf.decision_function(testing.text)
 
-testing["classification_sgd"] = clf.predict(test_matrix)
-testing["score_sgd"] = clf.decision_function(test_matrix)
-
-training["classification_sgd"] = clf.predict(train_matrix)
-training["score_sgd"] = clf.decision_function(train_matrix)
+training["classification_sgd"] = clf.predict(training.text)
+training["score_sgd"] = clf.decision_function(training.text)
 
 print("")
 print("SGD Classifier")
@@ -115,18 +166,32 @@ classify.print_statistics(
     model_name="SGD Classifier",
     file_name=FILE_NAME,
 )
-pickle.dump(clf, open(start.MAIN_DIR + "model_sgd", "wb"))
+pickle.dump(clf, open(start.MAIN_DIR + "model_sgd.sav", "wb"))
 
 
 # %% Random Forest
-clf = RandomForestClassifier(random_state=2)
-clf = clf.fit(train_matrix, training.relevant)
+pipeline = Pipeline(
+    [
+        (
+            "vect",
+            CountVectorizer(
+                strip_accents="unicode",
+                stop_words=classify.stop_words,
+                ngram_range=(1, 3),
+                min_df=10,
+            ),
+        ),
+        ("clf", RandomForestClassifier(random_state=2)),
+    ],
+)
 
-testing["classification_rf"] = clf.predict(test_matrix)
-testing["score_rf"] = [proba[1] for proba in clf.predict_proba(test_matrix)]
+clf = pipeline.fit(training.text, training.relevant)
 
-training["classification_rf"] = clf.predict(train_matrix)
-training["score_rf"] = [proba[1] for proba in clf.predict_proba(train_matrix)]
+testing["classification_rf"] = clf.predict(testing.text)
+testing["score_rf"] = [proba[1] for proba in clf.predict_proba(testing.text)]
+
+training["classification_rf"] = clf.predict(training.text)
+training["score_rf"] = [proba[1] for proba in clf.predict_proba(training.text)]
 
 print("")
 print("Random Forest Classifier")
@@ -136,18 +201,32 @@ classify.print_statistics(
     model_name="Random Forest Classifier",
     file_name=FILE_NAME,
 )
-pickle.dump(clf, open(start.MAIN_DIR + "model_rf", "wb"))
+pickle.dump(clf, open(start.MAIN_DIR + "model_rf.sav", "wb"))
 
 # %% Bernoulli Naive Bayes
-clf = BernoulliNB()
-clf = clf.fit(train_matrix, training.relevant)
+pipeline = Pipeline(
+    [
+        (
+            "vect",
+            CountVectorizer(
+                strip_accents="unicode",
+                stop_words=classify.stop_words,
+                ngram_range=(1, 3),
+                min_df=10,
+            ),
+        ),
+        ("clf", BernoulliNB()),
+    ],
+)
 
-testing["classification_nb"] = clf.predict(test_matrix)
-testing["score_nb"] = [proba[1] for proba in clf.predict_proba(test_matrix)]
+clf = pipeline.fit(training.text, training.relevant)
+
+testing["classification_nb"] = clf.predict(testing.text)
+testing["score_nb"] = [proba[1] for proba in clf.predict_proba(testing.text)]
 
 
-training["classification_nb"] = clf.predict(train_matrix)
-training["score_nb"] = [proba[1] for proba in clf.predict_proba(train_matrix)]
+training["classification_nb"] = clf.predict(training.text)
+training["score_nb"] = [proba[1] for proba in clf.predict_proba(training.text)]
 
 print("Naive Bayes")
 classify.print_statistics(
@@ -156,17 +235,50 @@ classify.print_statistics(
     model_name="Naive Bayes",
     file_name=FILE_NAME,
 )
-pickle.dump(clf, open(start.MAIN_DIR + "model_nb", "wb"))
+pickle.dump(clf, open(start.MAIN_DIR + "model_nb.sav", "wb"))
 
+
+probas = [proba[1] for proba in clf.predict_proba(training.text)]
+precisions, recalls, thresholds = precision_recall_curve(training.relevant, probas)
+threshold_recall = thresholds[np.argmax(recalls >= 0.70)]
+
+testing["classification_nb_recall"] = [
+    proba[1] for proba in clf.predict_proba(testing.text)
+] >= threshold_recall
+training["classification_nb_recall"] = [
+    proba[1] for proba in clf.predict_proba(training.text)
+] >= threshold_recall
+
+print("")
+print("Naive Bayes Classifier with Threshold")
+classify.print_statistics(
+    classification=testing.classification_nb_recall,
+    ground_truth=testing.relevant,
+    model_name="Naive Bayes Classifier with Threshold",
+    file_name=FILE_NAME,
+)
 # %%
-clf = LogisticRegression(penalty="l2")
-clf = clf.fit(train_matrix, training.relevant)
+pipeline = Pipeline(
+    [
+        (
+            "vect",
+            CountVectorizer(
+                strip_accents="unicode",
+                stop_words=classify.stop_words,
+                ngram_range=(1, 3),
+                min_df=10,
+            ),
+        ),
+        ("clf", LogisticRegression(penalty="l2")),
+    ],
+)
+clf = pipeline.fit(training.text, training.relevant)
 
-testing["classification_ridge"] = clf.predict(test_matrix)
-testing["score_ridge"] = [proba[1] for proba in clf.predict_proba(test_matrix)]
+testing["classification_ridge"] = clf.predict(testing.text)
+testing["score_ridge"] = [proba[1] for proba in clf.predict_proba(testing.text)]
 
-training["classification_ridge"] = clf.predict(train_matrix)
-training["score_ridge"] = [proba[1] for proba in clf.predict_proba(train_matrix)]
+training["classification_ridge"] = clf.predict(training.text)
+training["score_ridge"] = [proba[1] for proba in clf.predict_proba(training.text)]
 
 print("")
 print("Ridge Classifier")
@@ -180,84 +292,27 @@ classify.print_statistics(
 cf_matrix = confusion_matrix(testing.relevant, testing.classification_ridge)
 classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
 
-pickle.dump(clf, open(start.MAIN_DIR + "model_ridge", "wb"))
-
-# %% SVM with Threshold
-clf = svm.LinearSVC()
-clf = clf.fit(train_matrix, training.relevant)
-precisions, recalls, thresholds = precision_recall_curve(
-    training.relevant, clf.decision_function(train_matrix)
-)
-
-threshold_recall = thresholds[np.argmax(recalls >= 0.85)]
-
-testing["classification_svm_recall"] = (
-    clf.decision_function(test_matrix) >= threshold_recall
-)
-training["classification_svm_recall"] = (
-    clf.decision_function(train_matrix) >= threshold_recall
-)
-
-print("")
-print("SVM Classifier with Threshold")
-classify.print_statistics(
-    classification=testing.classification_svm_recall,
-    ground_truth=testing.relevant,
-    model_name="SVM Classifier with Threshold",
-    file_name=FILE_NAME,
-)
+pickle.dump(clf, open(start.MAIN_DIR + "model_ridge.sav", "wb"))
 
 
-# %%
-
-# %% Bernoulli Naive Bayes
-clf = BernoulliNB()
-clf = clf.fit(train_matrix, training.relevant)
-
-probas = [proba[1] for proba in clf.predict_proba(train_matrix)]
-precisions, recalls, thresholds = precision_recall_curve(training.relevant, probas)
-threshold_recall = thresholds[np.argmax(recalls >= 0.70)]
-
-testing["classification_nb_recall"] = [
-    proba[1] for proba in clf.predict_proba(test_matrix)
-] >= threshold_recall
-training["classification_nb_recall"] = [
-    proba[1] for proba in clf.predict_proba(train_matrix)
-] >= threshold_recall
-
-print("")
-print("Naive Bayes Classifier with Threshold")
-classify.print_statistics(
-    classification=testing.classification_nb_recall,
-    ground_truth=testing.relevant,
-    model_name="Naive Bayes Classifier with Threshold",
-    file_name=FILE_NAME,
-)
-
-# %%
-
-# %% Ridge
-clf = LogisticRegression(penalty="l2")
-clf = clf.fit(train_matrix, training.relevant)
-
-probas = [proba[1] for proba in clf.predict_proba(train_matrix)]
+probas = [proba[1] for proba in clf.predict_proba(training.text)]
 precisions, recalls, thresholds = precision_recall_curve(training.relevant, probas)
 threshold_recall = thresholds[np.argmax(recalls >= 0.70)]
 
 
 testing["classification_ridge_recall"] = [
-    proba[1] for proba in clf.predict_proba(test_matrix)
+    proba[1] for proba in clf.predict_proba(testing.text)
 ] >= threshold_recall
 training["classification_ridge_recall"] = [
-    proba[1] for proba in clf.predict_proba(train_matrix)
+    proba[1] for proba in clf.predict_proba(training.text)
 ] >= threshold_recall
 
 training["classification_ridge_recall_score"] = [
-    proba[1] for proba in clf.predict_proba(train_matrix)
+    proba[1] for proba in clf.predict_proba(training.text)
 ]
 
 testing["classification_ridge_recall_score"] = [
-    proba[1] for proba in clf.predict_proba(test_matrix)
+    proba[1] for proba in clf.predict_proba(testing.text)
 ]
 
 print("")
@@ -273,7 +328,7 @@ cf_matrix = confusion_matrix(testing.relevant, testing.classification_ridge_reca
 classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
 
 
-roc_auc_score(testing.relevant, [proba[1] for proba in clf.predict_proba(test_matrix)])
+roc_auc_score(testing.relevant, [proba[1] for proba in clf.predict_proba(testing.text)])
 
 # %%
 training.to_csv(start.MAIN_DIR + "training_models.csv")
