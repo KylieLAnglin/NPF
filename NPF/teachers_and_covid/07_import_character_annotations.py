@@ -56,7 +56,7 @@ df = df.merge(tweets, left_on=["unique_id"], right_on=["unique_id"])
 
 # %%
 df = df[df.category.isin([1, 2, 3, 4])]
-df = df[df.relevant != 0]
+df = df[(df.relevant != 0) | (df.category == 1)]
 df = df[df.irrelevant != 1]
 
 # %%
