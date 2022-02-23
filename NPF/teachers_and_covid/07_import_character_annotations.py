@@ -46,14 +46,20 @@ character_annotations = pd.concat(
 )
 
 df = pd.concat(
-    [relevance_annotations[relevance_annotations.relevant == 1], character_annotations]
+    [
+        relevance_annotations,
+        character_annotations,
+    ]
 )
 
 df = df.merge(tweets, left_on=["unique_id"], right_on=["unique_id"])
 
-
 # %%
 df = df[df.category.isin([1, 2, 3, 4])]
+df = df[df.relevant != 0]
+df = df[df.irrelevant != 1]
+
+# %%
 
 df["hero"] = np.where(df.category == 1, 1, 0)
 df["villain"] = np.where(df.category == 2, 1, 0)
@@ -90,12 +96,12 @@ with open(
         f.write(line.replace("'", '"'))
         f.write("\n")
 # %%
-# test_cats = [
-#     {"HERO": hero, "VILLAIN": villain, "VICTIM": victim, "OTHER": other}
-#     for hero, villain, victim, other in zip(
-#         testing.hero, testing.villain, testing.victim, testing.other
-#     )
-# ]
+test_cats = [
+    {"HERO": hero, "VILLAIN": villain, "VICTIM": victim, "OTHER": other}
+    for hero, villain, victim, other in zip(
+        testing.hero, testing.villain, testing.victim, testing.other
+    )
+]
 
 
 test_list = []
