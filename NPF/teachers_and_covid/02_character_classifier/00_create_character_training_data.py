@@ -22,12 +22,16 @@ tweets = tweets[tweets.classification_rule == 1]
 
 # %%
 training_batch_5 = tweets[tweets.random_set == 5]
-training_batch_5.to_csv(start.MAIN_DIR + "training_batch5.csv")  # joe
+training_batch_5.to_csv(start.MAIN_DIR + "training_batch5.csv", encoding="utf-8")  # joe
 
 training_batch_6 = tweets[tweets.random_set == 6]
-training_batch_6.to_csv(start.MAIN_DIR + "training_batch6.csv")  # jessica
+training_batch_6.to_csv(
+    start.MAIN_DIR + "training_batch6.csv", encoding="utf-8"
+)  # jessica
 
 training_batch_7 = tweets[tweets.random_set == 7]
-training_batch_7.to_csv(start.MAIN_DIR + "training_batch7.csv")  # kylie
+training_batch_7.to_csv(
+    start.MAIN_DIR + "training_batch7.csv", encoding="utf-8"
+)  # kylie
 
 # %%
