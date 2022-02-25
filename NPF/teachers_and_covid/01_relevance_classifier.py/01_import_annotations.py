@@ -55,3 +55,9 @@ annotations.category.value_counts()
 annotations[annotations.random_set == 3]["covid"].value_counts()
 annotations[annotations.random_set == 3]["character"].value_counts()
 pd.crosstab(index=annotations["covid"], columns=annotations["character"])
+
+# %%
+len(annotations)
+len(annotations[annotations.category == 1]) / len(annotations)
+len(annotations[annotations.category == 2]) / len(annotations)
+len(annotations[annotations.category == 3]) / len(annotations)
