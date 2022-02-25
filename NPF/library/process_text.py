@@ -6,6 +6,9 @@ import nltk
 import pandas as pd
 import numpy as np
 import scipy
+from collections import Counter
+import liwc
+
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -197,6 +200,8 @@ def vectorize_text(
     df: pd.DataFrame,
     text_col: str,
     remove_stopwords: bool = False,
+    min_df: float = 1,
+    max_features: int = None,
     tfidf: bool = False,
     lemma: bool = False,
     lsa: bool = False,
@@ -231,10 +236,14 @@ def vectorize_text(
     ]
 
     if tfidf == False:
-        vec = CountVectorizer(ngram_range=n_gram_range)
+        vec = CountVectorizer(
+            ngram_range=n_gram_range, min_df=min_df, max_features=max_features
+        )
 
     elif tfidf:
-        vec = TfidfVectorizer(ngram_range=n_gram_range)
+        vec = TfidfVectorizer(
+            ngram_range=n_gram_range, min_df=min_df, max_features=max_features
+        )
 
     X = vec.fit_transform(docs)
     matrix = pd.DataFrame(X.toarray(), columns=vec.get_feature_names(), index=df.index)
