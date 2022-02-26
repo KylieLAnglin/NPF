@@ -99,4 +99,4 @@ tweets[
         "score_ridge",
         "classification_rule",
     ]
-].to_csv(start.CLEAN_DIR + "tweets_classified.csv", index=False)
+].to_csv(start.TEMP_DIR + "tweets_classified.csv", index=False)

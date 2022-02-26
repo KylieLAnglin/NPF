@@ -8,7 +8,7 @@ from NPF.teachers_and_covid import start
 
 
 # %%
-tweets = pd.read_csv(start.MAIN_DIR + "tweets_full.csv")
+tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
 tweets = tweets[
     [
         "unique_id",
@@ -24,17 +24,17 @@ tweets = tweets[
     ]
 ]
 
-relevance_annotations = pd.read_csv(start.MAIN_DIR + "annotations.csv")
+relevance_annotations = pd.read_csv(start.CLEAN_DIR + "annotations.csv")
 relevance_annotations = relevance_annotations[["unique_id", "relevant", "category"]]
 
 character_annotations5 = pd.read_csv(
-    start.MAIN_DIR + "annotations/training_batch5_annotated.csv"
+    start.CLEAN_DIR + "annotations/training_batch5_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
 character_annotations6 = pd.read_csv(
-    start.MAIN_DIR + "annotations/training_batch6_annotated.csv"
+    start.CLEAN_DIR + "annotations/training_batch6_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
 character_annotations7 = pd.read_csv(
-    start.MAIN_DIR + "annotations/training_batch7_annotated.csv"
+    start.CLEAN_DIR + "annotations/training_batch7_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
 
 character_annotations = pd.concat(
@@ -68,7 +68,7 @@ df["victim"] = np.where(df.category == 3, 1, 0)
 df["other"] = np.where(df.category == 4, 1, 0)
 
 df.to_csv(
-    start.MAIN_DIR + "annotations_characters.csv",
+    start.CLEAN_DIR + "annotations_characters.csv",
     encoding="utf-8",
 )
 # %%

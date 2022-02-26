@@ -18,11 +18,11 @@ from sklearn.metrics import (
 
 # %%
 
-tweets = pd.read_csv(start.MAIN_DIR + "features.csv")
+tweets = pd.read_csv(start.TEMP_DIR + "features.csv")
 
 # %%
 
-liwc = pd.read_csv(start.MAIN_DIR + "features_liwc.csv")
+liwc = pd.read_csv(start.TEMP_DIR + "features_liwc.csv")
 liwc = liwc.add_prefix("liwc_")
 liwc = liwc.rename(columns={"liwc_A": "unique_id", "liwc_B": "tweet_text"})
 liwc = liwc.drop("tweet_text", 1)

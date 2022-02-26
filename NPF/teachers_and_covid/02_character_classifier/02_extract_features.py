@@ -8,13 +8,16 @@ from NPF.teachers_and_covid import start
 from NPF.library import process_text
 
 # %%
-tweets = pd.read_csv(start.MAIN_DIR + "tweets_classified.csv")
-tweets["unique_id"] = pd.to_numeric(tweets.unique_id, errors="coerce")
-tweets = tweets.set_index("unique_id")
+tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv").set_index("unique_id")
 
-annotations = pd.read_csv(start.MAIN_DIR + "annotations_characters.csv").set_index(
+relevance = pd.read_csv(start.TEMP_DIR + "tweets_classified.csv")
+relevance["unique_id"] = pd.to_numeric(relevance.unique_id, errors="coerce")
+relevance = relevance.set_index("unique_id")
+
+annotations = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv").set_index(
     "unique_id"
 )
+
 
 df = tweets.merge(
     annotations[["relevant", "category", "hero", "villain", "victim"]],
@@ -24,10 +27,11 @@ df = tweets.merge(
     right_index=True,
 )
 
+df = df.merge(relevance, left_index=True, right_index=True)
+
 # %%
 df = df[(df.classification_rule == 1) | (df._merge == "both")]
 
-# %%
 df = df.rename(
     columns={
         "text": "tweet_text",
@@ -45,9 +49,8 @@ df = df.rename(
     }
 )
 
-
 # %% Cleaned Text
-df["text_clean"] = [
+df["tweet_text_clean"] = [
     process_text.process_text_nltk(
         text=text,
         lower_case=True,
@@ -103,13 +106,14 @@ term_matrix = term_matrix.merge(phrases, left_index=True, right_index=True)
 lsa_matrix, word_weights = process_text.create_lsa_dfs(
     matrix=term_matrix, n_components=50
 )
-
+lsa_matrix = lsa_matrix.add_prefix("lsa_")
 # %%
 feature_df = df.merge(lsa_matrix, left_index=True, right_index=True)
 feature_df = feature_df.merge(term_matrix, left_index=True, right_index=True)
 feature_df = feature_df.merge(phrases, left_index=True, right_index=True)
-# %%
-feature_df.to_csv(start.MAIN_DIR + "features.csv")
 
 # %%
-feature_df[["tweet_text"]].to_csv(start.MAIN_DIR + "tweets_relevant.csv")
+feature_df.to_csv(start.TEMP_DIR + "features.csv")
+
+# %%
+feature_df[["tweet_text"]].to_csv(start.TEMP_DIR + "tweets_relevant.csv")
