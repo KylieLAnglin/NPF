@@ -67,6 +67,8 @@ df["villain"] = np.where(df.category == 2, 1, 0)
 df["victim"] = np.where(df.category == 3, 1, 0)
 df["other"] = np.where(df.category == 4, 1, 0)
 
-df.to_csv(start.MAIN_DIR + "annotations_characters.csv", encoding="utf-8")
-df.to_pickle(start.MAIN_DIR + "annotations_characters.pkl")
+df.to_csv(
+    start.MAIN_DIR + "annotations_characters.csv",
+    encoding="utf-8",
+)
 # %%

@@ -34,4 +34,23 @@ training_batch_7.to_csv(
     start.MAIN_DIR + "training_batch7.csv", encoding="utf-8"
 )  # kylie
 
+
+training_batch_8 = tweets[tweets.random_set == 8]
+training_batch_8.to_csv(start.MAIN_DIR + "training_batch8.csv", encoding="utf-8")  # joe
+
+training_batch_9 = tweets[tweets.random_set == 9]
+training_batch_9.to_csv(
+    start.MAIN_DIR + "training_batch9.csv", encoding="utf-8"
+)  # jessica
+
+training_batch_10 = tweets[tweets.random_set == 10]
+training_batch_10.to_csv(
+    start.MAIN_DIR + "training_batch10.csv", encoding="utf-8"
+)  # all
+
+training_batch_11 = tweets[tweets.random_set == 11]
+training_batch_11.to_csv(
+    start.MAIN_DIR + "training_batch11.csv", encoding="utf-8"
+)  # all
+
 # %%

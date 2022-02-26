@@ -8,7 +8,7 @@ from NPF.teachers_and_covid import start
 
 
 # %%
-tweets = pd.read_csv(start.MAIN_DIR + "tweets_full.csv")
+tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
 tweets = tweets[
     [
         "unique_id",
@@ -25,25 +25,25 @@ tweets = tweets[
 ]
 # %%
 annotations1 = pd.read_csv(
-    start.MAIN_DIR + "annotations/training_batch1_annotated.csv", encoding="utf-8"
+    start.CLEAN_DIR + "annotations/training_batch1_annotated.csv", encoding="utf-8"
 )
 annotations2 = pd.read_csv(
-    start.MAIN_DIR + "annotations/training_batch2_annotated.csv", encoding="utf-8"
+    start.CLEAN_DIR + "annotations/training_batch2_annotated.csv", encoding="utf-8"
 )
 
 annotations3 = pd.read_csv(
-    start.MAIN_DIR + "annotations/training_batch3_annotated.csv", encoding="utf-8"
+    start.CLEAN_DIR + "annotations/training_batch3_annotated.csv", encoding="utf-8"
 )
 
 annotations4 = pd.read_csv(
-    start.MAIN_DIR + "annotations/training_batch4_annotated.csv", encoding="utf-8"
+    start.CLEAN_DIR + "annotations/training_batch4_annotated.csv", encoding="utf-8"
 )
 annotations4 = annotations4.head(700)
 
 annotations = pd.concat([annotations1, annotations2, annotations3, annotations4])
 # %%
 annotations = annotations[~annotations.relevant.isnull()]
-annotations.to_csv(start.MAIN_DIR + "annotations.csv")
+annotations.to_csv(start.CLEAN_DIR + "annotations.csv")
 
 # %%
 

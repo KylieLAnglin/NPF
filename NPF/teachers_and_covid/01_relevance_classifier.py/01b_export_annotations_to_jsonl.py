@@ -10,7 +10,7 @@ from NPF.library import process_text
 
 
 # %%
-tweets = pd.read_csv(start.MAIN_DIR + "tweets_full.csv")
+tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
 tweets = tweets[
     [
         "unique_id",
@@ -25,7 +25,7 @@ tweets = tweets[
         "random_set",
     ]
 ]
-annotations = pd.read_csv(start.MAIN_DIR + "annotations.csv")
+annotations = pd.read_csv(start.CLEAN_DIR + "annotations.csv")
 annotations = annotations[
     [
         "unique_id",
@@ -73,7 +73,7 @@ for text, cat in zip(training.text, train_cats):
 
 train_list = [str(item) for item in train_list]
 
-with open("/Users/kla21002/textcat_tweets/assets/json_training.jsonl", "w") as f:
+with open(start.HOME_DIR + "textcat_tweets/assets/json_training.jsonl", "w") as f:
     for line in train_list:
         f.write(line.replace("'", '"'))
         f.write("\n")
@@ -86,7 +86,7 @@ for text, cat in zip(testing.text, test_cats):
 
 test_list = [str(item) for item in test_list]
 
-with open("/Users/kla21002/textcat_tweets/assets/json_testing.jsonl", "w") as f:
+with open(start.HOME_DIR + "textcat_tweets/assets/json_testing.jsonl", "w") as f:
     for line in test_list:
         f.write(line.replace("'", '"'))
         f.write("\n")

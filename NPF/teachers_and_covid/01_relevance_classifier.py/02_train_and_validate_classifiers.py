@@ -17,12 +17,12 @@ from sklearn.pipeline import Pipeline
 from NPF.teachers_and_covid import start
 from NPF.library import classify
 
-FILE_NAME = start.MAIN_DIR + "model statistics.txt"
+FILE_NAME = start.CLEAN_DIR + "relevance model statistics.txt"
 f = open(FILE_NAME, "w+")
 
 
 # %%
-tweets = pd.read_csv(start.MAIN_DIR + "tweets_full.csv")
+tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
 tweets = tweets[
     [
         "unique_id",
@@ -37,7 +37,7 @@ tweets = tweets[
         "random_set",
     ]
 ]
-annotations = pd.read_csv(start.MAIN_DIR + "annotations.csv")
+annotations = pd.read_csv(start.CLEAN_DIR + "annotations.csv")
 annotations = annotations[
     [
         "unique_id",
@@ -63,17 +63,7 @@ testing = df[df.random_set == 3]
 training = df[df.random_set != 3]
 
 # %%
-count_vect = CountVectorizer(
-    strip_accents="unicode",
-    stop_words=classify.stop_words,
-    ngram_range=(1, 3),
-    min_df=10,
-)
-train_matrix = count_vect.fit_transform(training.text)
-train_matrix.shape
 
-test_matrix = count_vect.transform(testing.text)
-test_matrix.shape
 
 # %% SVM
 pipeline = Pipeline(
@@ -110,7 +100,7 @@ classify.print_statistics(
     file_name=FILE_NAME,
 )
 
-pickle.dump(clf, open(start.MAIN_DIR + "model_svm.sav", "wb"))
+pickle.dump(clf, open(start.TEMP_DIR + "model_svm.sav", "wb"))
 
 precisions, recalls, thresholds = precision_recall_curve(
     training.relevant, clf.decision_function(training.text)
@@ -166,7 +156,7 @@ classify.print_statistics(
     model_name="SGD Classifier",
     file_name=FILE_NAME,
 )
-pickle.dump(clf, open(start.MAIN_DIR + "model_sgd.sav", "wb"))
+pickle.dump(clf, open(start.TEMP_DIR + "model_sgd.sav", "wb"))
 
 
 # %% Random Forest
@@ -201,7 +191,7 @@ classify.print_statistics(
     model_name="Random Forest Classifier",
     file_name=FILE_NAME,
 )
-pickle.dump(clf, open(start.MAIN_DIR + "model_rf.sav", "wb"))
+pickle.dump(clf, open(start.TEMP_DIR + "model_rf.sav", "wb"))
 
 # %% Bernoulli Naive Bayes
 pipeline = Pipeline(
@@ -235,7 +225,7 @@ classify.print_statistics(
     model_name="Naive Bayes",
     file_name=FILE_NAME,
 )
-pickle.dump(clf, open(start.MAIN_DIR + "model_nb.sav", "wb"))
+pickle.dump(clf, open(start.TEMP_DIR + "model_nb.sav", "wb"))
 
 
 probas = [proba[1] for proba in clf.predict_proba(training.text)]
@@ -292,7 +282,7 @@ classify.print_statistics(
 cf_matrix = confusion_matrix(testing.relevant, testing.classification_ridge)
 classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
 
-pickle.dump(clf, open(start.MAIN_DIR + "model_ridge.sav", "wb"))
+pickle.dump(clf, open(start.TEMP_DIR + "model_ridge.sav", "wb"))
 
 
 probas = [proba[1] for proba in clf.predict_proba(training.text)]
@@ -331,5 +321,5 @@ classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
 roc_auc_score(testing.relevant, [proba[1] for proba in clf.predict_proba(testing.text)])
 
 # %%
-training.to_csv(start.MAIN_DIR + "training_models.csv")
-testing.to_csv(start.MAIN_DIR + "testing_models.csv")
+training.to_csv(start.TEMP_DIR + "training_models.csv")
+testing.to_csv(start.TEMP_DIR + "testing_models.csv")
