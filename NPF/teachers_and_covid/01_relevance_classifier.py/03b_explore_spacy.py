@@ -19,7 +19,7 @@ from NPF.teachers_and_covid import start
 from NPF.library import classify
 
 # %%
-testing = pd.read_csv(start.MAIN_DIR + "testing_spacy.csv")
+testing = pd.read_csv(start.TEMP_DIR + "testing_spacy.csv")
 testing = testing.rename(columns={"classification": "score"})
 
 testing["classification"] = np.where(testing.score > 0.5, 1, 0)

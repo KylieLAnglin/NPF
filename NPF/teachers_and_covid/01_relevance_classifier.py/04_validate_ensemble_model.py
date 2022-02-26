@@ -10,11 +10,11 @@ from NPF.teachers_and_covid import start
 from NPF.library import classify
 
 # %%
-training_spacy = pd.read_csv(start.MAIN_DIR + "training_spacy.csv")
-testing_spacy = pd.read_csv(start.MAIN_DIR + "testing_spacy.csv")
+training_spacy = pd.read_csv(start.TEMP_DIR + "training_spacy.csv")
+testing_spacy = pd.read_csv(start.TEMP_DIR + "testing_spacy.csv")
 
-training_models = pd.read_csv(start.MAIN_DIR + "training_models.csv")
-testing_models = pd.read_csv(start.MAIN_DIR + "testing_models.csv")
+training_models = pd.read_csv(start.TEMP_DIR + "training_models.csv")
+testing_models = pd.read_csv(start.TEMP_DIR + "testing_models.csv")
 
 # %%
 
@@ -85,6 +85,16 @@ training["classification_rule"] = np.where(
     | (training.score_rf > 0.5),
     1,
     0,
+)
+
+testing["classification_spacy"] = np.where(testing.score_spacy > 0.5, 1, 0)
+testing["classification_total"] = (
+    testing.classification_spacy
+    + testing.classification_svm
+    + testing.classification_sgd
+    + testing.classification_rf
+    + testing.classification_nb
+    + testing.classification_ridge
 )
 
 testing["classification_rule"] = np.where(

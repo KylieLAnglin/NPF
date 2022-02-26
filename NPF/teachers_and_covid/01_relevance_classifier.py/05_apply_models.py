@@ -36,17 +36,17 @@ from NPF.teachers_and_covid import start
 from NPF.library import classify
 
 # %%
-clf_nb = pickle.load(open(start.MAIN_DIR + "model_nb.sav", "rb"))
-clf_rf = pickle.load(open(start.MAIN_DIR + "model_rf.sav", "rb"))
-clf_ridge = pickle.load(open(start.MAIN_DIR + "model_ridge.sav", "rb"))
-clf_svm = pickle.load(open(start.MAIN_DIR + "model_svm.sav", "rb"))
-clf_sgd = pickle.load(open(start.MAIN_DIR + "model_sgd.sav", "rb"))
+clf_nb = pickle.load(open(start.TEMP_DIR + "model_nb.sav", "rb"))
+clf_rf = pickle.load(open(start.TEMP_DIR + "model_rf.sav", "rb"))
+clf_ridge = pickle.load(open(start.TEMP_DIR + "model_ridge.sav", "rb"))
+clf_svm = pickle.load(open(start.TEMP_DIR + "model_svm.sav", "rb"))
+clf_sgd = pickle.load(open(start.TEMP_DIR + "model_sgd.sav", "rb"))
 
-spacy_df = pd.read_csv(start.MAIN_DIR + "model_spacy.csv")
+spacy_df = pd.read_csv(start.TEMP_DIR + "model_spacy.csv")
 spacy_df["unique_id"] = pd.to_numeric(spacy_df.unique_id, errors="coerce")
 
 # %%
-tweets = pd.read_csv(start.MAIN_DIR + "tweets_full.csv")
+tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
 tweets = tweets[
     [
         "unique_id",
@@ -89,4 +89,14 @@ tweets["classification_rule"] = np.where(
     0,
 )
 # %%
-tweets.to_csv(start.MAIN_DIR + "tweets_classified.csv")
+tweets[
+    [
+        "unique_id",
+        "score_nb",
+        "score_cvm",
+        "score_sgd",
+        "score_rf",
+        "score_ridge",
+        "classification_rule",
+    ]
+].to_csv(start.CLEAN_DIR + "tweets_classified.csv", index=False)

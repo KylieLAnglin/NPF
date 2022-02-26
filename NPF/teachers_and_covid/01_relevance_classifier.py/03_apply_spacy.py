@@ -6,10 +6,11 @@ from spacy.util import minibatch, compounding
 import numpy as np
 import re
 
-MAIN_DIR = "/Volumes/GoogleDrive/.shortcut-targets-by-id/1wL0tiiBznVSn5Gij9hYTiC6HTPCExAn8/Policy Narratives and NLP/Data and Code/"
-
+CLEAN_DIR = "/Volumes/GoogleDrive/.shortcut-targets-by-id/1wL0tiiBznVSn5Gij9hYTiC6HTPCExAn8/Policy Narratives and NLP/Data and Code/"
+MODEL_DIR = "/Users/kla21002/textcat_tweets/packages/en_textcat_demo-0.0.0/en_textcat_demo/en_textcat_demo-0.0.0"
+TEMP_DIR = "/Users/kla21002/Dropbox/Active/NPF/data/"
 # %%
-tweets = pd.read_csv(MAIN_DIR + "tweets_full.csv")
+tweets = pd.read_csv(CLEAN_DIR + "tweets_full.csv")
 tweets = tweets[
     [
         "unique_id",
@@ -28,7 +29,7 @@ tweets["text"] = [re.sub(r"[^\w\s]", "", s) for s in tweets.text]  # remove punc
 tweets["text"] = tweets.text.str.replace("\n", " ", regex=False)  # remove new line
 tweets["text"] = tweets.text.str.replace("\xa0", " ", regex=False)  # remove utf errors
 
-annotations = pd.read_csv(MAIN_DIR + "annotations.csv")
+annotations = pd.read_csv(CLEAN_DIR + "annotations.csv")
 annotations = annotations[
     [
         "unique_id",
@@ -54,40 +55,39 @@ training = df[df.random_set != 3]
 testing = df[df.random_set == 3]
 
 # %%
-model_dir = "/Users/kla21002/textcat_tweets/packages/en_textcat_demo-0.0.0/en_textcat_demo/en_textcat_demo-0.0.0"
 # apply the saved model
-print("Loading from", model_dir)
-nlp = spacy.load(model_dir)
+print("Loading from", MODEL_DIR)
+nlp = spacy.load(MODEL_DIR)
 categories = []
 for text in testing.text:
     doc = nlp(text)
     categories.append(doc.cats)
 
 testing["classification"] = [label["POSITIVE"] for label in categories]
-testing.to_csv(MAIN_DIR + "testing_spacy.csv")
+testing.to_csv(TEMP_DIR + "testing_spacy.csv")
 # %%
 
 # apply the saved model
-print("Loading from", model_dir)
-nlp = spacy.load(model_dir)
+print("Loading from", MODEL_DIR)
+nlp = spacy.load(MODEL_DIR)
 categories = []
 for text in training.text:
     doc = nlp(text)
     categories.append(doc.cats)
 
 training["classification"] = [label["POSITIVE"] for label in categories]
-training.to_csv(MAIN_DIR + "training_spacy.csv")
+training.to_csv(TEMP_DIR + "training_spacy.csv")
 
 
 # %%
 
 # apply the saved model
-print("Loading from", model_dir)
-nlp = spacy.load(model_dir)
+print("Loading from", MODEL_DIR)
+nlp = spacy.load(MODEL_DIR)
 categories = []
 for text in tweets.text:
     doc = nlp(text)
     categories.append(doc.cats)
 
 tweets["score_spacy"] = [label["POSITIVE"] for label in categories]
-tweets.to_csv(MAIN_DIR + "model_spacy.csv")
+tweets[["unique_id", "score_spacy"]].to_csv(TEMP_DIR + "model_spacy.csv", index=False)
