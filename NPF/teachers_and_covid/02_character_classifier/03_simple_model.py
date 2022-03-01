@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 from NPF.library import classify
+from NPF.teachers_and_covid import start
 from sklearn import svm
 from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -69,7 +70,7 @@ df_std = df[["tweet_hero", "tweet_victim", "tweet_villain", "random_set"]].merge
     matrix, left_index=True, right_index=True
 )
 # %%
-outcome = "tweet_villain"
+outcome = "tweet_hero"
 
 testing = df_std[df_std.random_set == 3]
 training = df_std[df_std.random_set != 3]
@@ -133,5 +134,6 @@ classify.print_statistics(
     ground_truth=testing_outcome,
     model_name="Ridge Classifier with Threshold",
 )
+roc_auc_score(testing_outcome, clf.decision_function(testing_matrix))
 
 # %%

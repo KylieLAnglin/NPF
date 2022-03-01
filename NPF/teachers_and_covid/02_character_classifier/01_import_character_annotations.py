@@ -36,12 +36,25 @@ character_annotations6 = pd.read_csv(
 character_annotations7 = pd.read_csv(
     start.CLEAN_DIR + "annotations/training_batch7_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
+character_annotations8 = pd.read_csv(
+    start.CLEAN_DIR + "annotations/training_batch8_annotated.csv"
+)[["unique_id", "category", "irrelevant"]]
+character_annotations9 = pd.read_csv(
+    start.CLEAN_DIR + "annotations/training_batch9_annotated_JG.csv"
+)[["unique_id", "category", "irrelevant"]]
+character_annotations10 = pd.read_csv(
+    start.CLEAN_DIR + "annotations/training_batch10_annotated.csv"
+)[["unique_id", "category", "irrelevant"]]
+
 
 character_annotations = pd.concat(
     [
         character_annotations5,
         character_annotations6,
         character_annotations7,
+        character_annotations8,
+        character_annotations9,
+        character_annotations10,
     ]
 )
 
@@ -57,7 +70,7 @@ df = df.merge(tweets, left_on=["unique_id"], right_on=["unique_id"])
 
 # %%
 df = df[df.category.isin([1, 2, 3, 4])]
-df = df[(df.relevant != 0) | (df.category == 1)]
+df = df[(df.relevant != 0)]
 df = df[df.irrelevant != 1]
 
 # %%

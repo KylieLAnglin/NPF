@@ -9,7 +9,7 @@ from NPF.teachers_and_covid import start
 
 
 # %%
-df = pd.read_pickle(start.CLEAN_DIR + "annotations_characters.pkl")
+df = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
 
 # %%
 df["text"] = [re.sub(r"[^\w\s]", "", s) for s in df.text]  # remove punctuation

@@ -59,7 +59,9 @@ features = character_words + [
     "tone_pos",
     "tone_neg",
 ]
-features = features + [i for i in range(0, 50)]
+lsas = ["lsa_" + str(i) for i in range(0, 50)]
+
+features = features + lsas
 
 # %%
 
@@ -70,7 +72,7 @@ df_std = df[["tweet_hero", "tweet_victim", "tweet_villain", "random_set"]].merge
     matrix, left_index=True, right_index=True
 )
 # %%
-outcome = "tweet_villain"
+outcome = "tweet_victim"
 
 testing = df_std[df_std.random_set == 3]
 training = df_std[df_std.random_set != 3]
