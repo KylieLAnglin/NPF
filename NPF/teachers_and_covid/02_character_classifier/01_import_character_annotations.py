@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import re
 
+from scipy import rand
+
 from NPF.teachers_and_covid import start
 
 
@@ -39,9 +41,9 @@ character_annotations7 = pd.read_csv(
 character_annotations8 = pd.read_csv(
     start.CLEAN_DIR + "annotations/training_batch8_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
-character_annotations9 = pd.read_csv(
-    start.CLEAN_DIR + "annotations/training_batch9_annotated_JG.csv"
-)[["unique_id", "category", "irrelevant"]]
+# character_annotations9 = pd.read_csv(
+#     start.CLEAN_DIR + "annotations/training_batch9_annotated.csv"
+# )[["unique_id", "category", "irrelevant"]]
 character_annotations10 = pd.read_csv(
     start.CLEAN_DIR + "annotations/training_batch10_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
@@ -53,7 +55,7 @@ character_annotations = pd.concat(
         character_annotations6,
         character_annotations7,
         character_annotations8,
-        character_annotations9,
+        # character_annotations9,
         character_annotations10,
     ]
 )
@@ -80,8 +82,8 @@ df["villain"] = np.where(df.category == 2, 1, 0)
 df["victim"] = np.where(df.category == 3, 1, 0)
 df["other"] = np.where(df.category == 4, 1, 0)
 
+
 df.to_csv(
     start.CLEAN_DIR + "annotations_characters.csv",
     encoding="utf-8",
 )
-# %%

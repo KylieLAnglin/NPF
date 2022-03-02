@@ -45,7 +45,7 @@ training_batch_8.to_csv(
 training_batch_9 = tweets[tweets.random_set == 9]
 training_batch_9.to_csv(
     start.CLEAN_DIR + "temp/training_batch9.csv", encoding="utf-8"
-)  # jessica
+)  # jessica coded by Kylie
 
 training_batch_10 = tweets[tweets.random_set == 10]
 training_batch_10.to_csv(
