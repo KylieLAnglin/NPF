@@ -6,7 +6,13 @@ import numpy as np
 import functools
 import pandas as pd
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+)
 from zlib import crc32
 from sklearn.metrics._plot.confusion_matrix import plot_confusion_matrix
 import seaborn as sns
@@ -360,3 +366,29 @@ character_words = [
     "teach",
     "sick",
 ]
+
+
+def return_statistics(ground_truth, scores, classification):
+    """Calculate and return classifier performance statistics in dictionary
+
+    Args:
+        ground_truth (_type_): _description_
+        scores (_type_): _description_
+        classification (_type_): _description_
+        model_name (str): _description_
+    """
+
+    accuracy = accuracy_score(y_true=ground_truth, y_pred=classification)
+    precision = precision_score(y_true=ground_truth, y_pred=classification)
+    recall = recall_score(y_true=ground_truth, y_pred=classification)
+    f1 = f1_score(y_true=ground_truth, y_pred=classification)
+    auc = roc_auc_score(ground_truth, scores)
+
+    performance = {
+        "accuracy": accuracy,
+        "precision": precision,
+        "recall": recall,
+        "auc": auc,
+    }
+
+    return performance

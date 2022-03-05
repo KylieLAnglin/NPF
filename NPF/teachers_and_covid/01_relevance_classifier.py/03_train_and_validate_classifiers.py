@@ -4,6 +4,8 @@ import re
 import pandas as pd
 import numpy as np
 import pickle
+from openpyxl import load_workbook
+
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import svm
@@ -20,7 +22,7 @@ from NPF.library import classify
 FILE_NAME = start.CLEAN_DIR + "relevance model statistics.txt"
 f = open(FILE_NAME, "w+")
 
-
+performance_statistics = {}
 # %%
 tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
 tweets = tweets[
@@ -62,9 +64,6 @@ df = df.sample(len(annotations), random_state=68)
 testing = df[df.random_set == 3]
 training = df[df.random_set != 3]
 
-# %%
-
-
 # %% SVM
 pipeline = Pipeline(
     [
@@ -80,9 +79,8 @@ pipeline = Pipeline(
         ("clf", svm.LinearSVC()),
     ],
 )
-
-
 clf = pipeline.fit(training.text, training.relevant)
+pickle.dump(clf, open(start.TEMP_DIR + "model_svm.sav", "wb"))
 
 
 testing["classification_svm"] = clf.predict(testing.text)
@@ -91,38 +89,13 @@ testing["score_svm"] = clf.decision_function(testing.text)
 training["classification_csv"] = clf.predict(training.text)
 training["score_svm"] = clf.decision_function(training.text)
 
-print("")
-print("SVM Classifier")
-classify.print_statistics(
+performance_statistics["SVM"] = classify.return_statistics(
+    ground_truth=testing.relevant,
+    scores=testing.score_svm,
     classification=testing.classification_svm,
-    ground_truth=testing.relevant,
-    model_name="SVM Classifier",
-    file_name=FILE_NAME,
 )
 
-pickle.dump(clf, open(start.TEMP_DIR + "model_svm.sav", "wb"))
-
-precisions, recalls, thresholds = precision_recall_curve(
-    training.relevant, clf.decision_function(training.text)
-)
-
-threshold_recall = thresholds[np.argmax(recalls >= 0.85)]
-
-testing["classification_svm_recall"] = (
-    clf.decision_function(testing.text) >= threshold_recall
-)
-training["classification_svm_recall"] = (
-    clf.decision_function(training.text) >= threshold_recall
-)
-
-print("")
-print("SVM Classifier with Threshold")
-classify.print_statistics(
-    classification=testing.classification_svm_recall,
-    ground_truth=testing.relevant,
-    model_name="SVM Classifier with Threshold",
-    file_name=FILE_NAME,
-)
+# %%
 
 
 # %% Stochastic Gradient Descent
@@ -148,16 +121,14 @@ testing["score_sgd"] = clf.decision_function(testing.text)
 training["classification_sgd"] = clf.predict(training.text)
 training["score_sgd"] = clf.decision_function(training.text)
 
-print("")
-print("SGD Classifier")
-classify.print_statistics(
-    classification=testing.classification_sgd,
-    ground_truth=testing.relevant,
-    model_name="SGD Classifier",
-    file_name=FILE_NAME,
-)
+
 pickle.dump(clf, open(start.TEMP_DIR + "model_sgd.sav", "wb"))
 
+performance_statistics["SGD"] = classify.return_statistics(
+    ground_truth=testing.relevant,
+    scores=testing.score_sgd,
+    classification=testing.classification_sgd,
+)
 
 # %% Random Forest
 pipeline = Pipeline(
@@ -183,15 +154,13 @@ testing["score_rf"] = [proba[1] for proba in clf.predict_proba(testing.text)]
 training["classification_rf"] = clf.predict(training.text)
 training["score_rf"] = [proba[1] for proba in clf.predict_proba(training.text)]
 
-print("")
-print("Random Forest Classifier")
-classify.print_statistics(
-    classification=testing.classification_rf,
-    ground_truth=testing.relevant,
-    model_name="Random Forest Classifier",
-    file_name=FILE_NAME,
-)
 pickle.dump(clf, open(start.TEMP_DIR + "model_rf.sav", "wb"))
+
+performance_statistics["Random Forest"] = classify.return_statistics(
+    ground_truth=testing.relevant,
+    scores=testing.score_rf,
+    classification=testing.classification_rf,
+)
 
 # %% Bernoulli Naive Bayes
 pipeline = Pipeline(
@@ -218,15 +187,16 @@ testing["score_nb"] = [proba[1] for proba in clf.predict_proba(testing.text)]
 training["classification_nb"] = clf.predict(training.text)
 training["score_nb"] = [proba[1] for proba in clf.predict_proba(training.text)]
 
-print("Naive Bayes")
-classify.print_statistics(
-    classification=testing.classification_nb,
-    ground_truth=testing.relevant,
-    model_name="Naive Bayes",
-    file_name=FILE_NAME,
-)
+
 pickle.dump(clf, open(start.TEMP_DIR + "model_nb.sav", "wb"))
 
+performance_statistics["Naive Bayes"] = classify.return_statistics(
+    ground_truth=testing.relevant,
+    scores=testing.score_nb,
+    classification=testing.classification_nb,
+)
+
+# %% Naive Bayes Threshold
 
 probas = [proba[1] for proba in clf.predict_proba(training.text)]
 precisions, recalls, thresholds = precision_recall_curve(training.relevant, probas)
@@ -239,14 +209,12 @@ training["classification_nb_recall"] = [
     proba[1] for proba in clf.predict_proba(training.text)
 ] >= threshold_recall
 
-print("")
-print("Naive Bayes Classifier with Threshold")
-classify.print_statistics(
-    classification=testing.classification_nb_recall,
+performance_statistics["Naive Bayes Threshold"] = classify.return_statistics(
     ground_truth=testing.relevant,
-    model_name="Naive Bayes Classifier with Threshold",
-    file_name=FILE_NAME,
+    scores=testing.score_nb,
+    classification=testing.classification_nb_recall,
 )
+
 # %%
 pipeline = Pipeline(
     [
@@ -270,13 +238,10 @@ testing["score_ridge"] = [proba[1] for proba in clf.predict_proba(testing.text)]
 training["classification_ridge"] = clf.predict(training.text)
 training["score_ridge"] = [proba[1] for proba in clf.predict_proba(training.text)]
 
-print("")
-print("Ridge Classifier")
-classify.print_statistics(
-    classification=testing.classification_ridge,
+performance_statistics["Ridge Regression"] = classify.return_statistics(
     ground_truth=testing.relevant,
-    model_name="Ridge Classifier",
-    file_name=FILE_NAME,
+    scores=testing.score_ridge,
+    classification=testing.classification_ridge,
 )
 
 cf_matrix = confusion_matrix(testing.relevant, testing.classification_ridge)
@@ -297,29 +262,106 @@ training["classification_ridge_recall"] = [
     proba[1] for proba in clf.predict_proba(training.text)
 ] >= threshold_recall
 
-training["classification_ridge_recall_score"] = [
-    proba[1] for proba in clf.predict_proba(training.text)
-]
-
-testing["classification_ridge_recall_score"] = [
-    proba[1] for proba in clf.predict_proba(testing.text)
-]
-
-print("")
-print("Ridge Classifier with Threshold")
-classify.print_statistics(
-    classification=testing.classification_ridge_recall,
-    ground_truth=testing.relevant,
-    model_name="Ridge Classifier with Threshold",
-    file_name=FILE_NAME,
-)
 
 cf_matrix = confusion_matrix(testing.relevant, testing.classification_ridge_recall)
 classify.create_plot_confusion_matrix(cf_matrix=cf_matrix)
 
+performance_statistics["Ridge Regression Threshold"] = classify.return_statistics(
+    ground_truth=testing.relevant,
+    scores=testing.score_ridge,
+    classification=testing.classification_ridge_recall,
+)
 
-roc_auc_score(testing.relevant, [proba[1] for proba in clf.predict_proba(testing.text)])
 
+# %%
+training_spacy = pd.read_csv(start.TEMP_DIR + "training_spacy.csv")
+testing_spacy = pd.read_csv(start.TEMP_DIR + "testing_spacy.csv")
+
+
+training = training.merge(
+    training_spacy[["unique_id", "classification"]].rename(
+        columns={"classification": "score_spacy"}
+    ),
+    left_on="unique_id",
+    right_on="unique_id",
+)
+training["classification_spacy"] = np.where(training.score_spacy > 0.5, 1, 0)
+
+testing = testing.merge(
+    testing_spacy[["unique_id", "classification"]].rename(
+        columns={"classification": "score_spacy"}
+    ),
+    left_on="unique_id",
+    right_on="unique_id",
+)
+testing["classification_spacy"] = np.where(testing.score_spacy > 0.5, 1, 0)
+
+performance_statistics["SpaCy CNN"] = classify.return_statistics(
+    ground_truth=testing.relevant,
+    scores=testing.score_spacy,
+    classification=testing.classification_spacy,
+)
+
+# %%
+training["classification_rule"] = np.where(
+    (training.score_spacy > 0.5)
+    | (training.score_ridge > 0.5)
+    | (training.score_svm > 0.5)
+    | (training.score_sgd > 0.5)
+    | (training.score_nb > 0.5)
+    | (training.score_rf > 0.5),
+    1,
+    0,
+)
+
+testing["classification_rule"] = np.where(
+    (testing.score_spacy > 0.5)
+    | (testing.score_ridge > 0.5)
+    | (testing.score_svm > 0.5)
+    | (testing.score_sgd > 0.5)
+    | (testing.score_nb > 0.5)
+    | (testing.score_rf > 0.5),
+    1,
+    0,
+)
+
+testing["classification_count"] = (
+    testing.classification_spacy
+    + testing.classification_ridge
+    + testing.classification_svm
+    + testing.classification_sgd
+    + testing.classification_nb
+    + testing.classification_rf
+)
+
+performance_statistics["Emsemble"] = classify.return_statistics(
+    ground_truth=testing.relevant,
+    scores=testing.classification_count,
+    classification=testing.classification_rule,
+)
 # %%
 training.to_csv(start.TEMP_DIR + "training_models.csv")
 testing.to_csv(start.TEMP_DIR + "testing_models.csv")
+
+# %%
+file_path = start.CLEAN_DIR + "performance_relevance.xlsx"
+wb = load_workbook(file_path)
+ws = wb.active
+
+row = 2
+for model in performance_statistics.keys():
+    col = 1
+    ws.cell(row=row, column=col).value = model
+    col = col + 1
+    ws.cell(row=row, column=col).value = performance_statistics[model]["accuracy"]
+    col = col + 1
+    ws.cell(row=row, column=col).value = performance_statistics[model]["precision"]
+    col = col + 1
+    ws.cell(row=row, column=col).value = performance_statistics[model]["recall"]
+    col = col + 1
+    ws.cell(row=row, column=col).value = performance_statistics[model]["auc"]
+    row = row + 1
+
+wb.save(file_path)
+
+# %%

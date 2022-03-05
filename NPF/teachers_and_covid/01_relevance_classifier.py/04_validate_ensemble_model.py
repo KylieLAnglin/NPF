@@ -17,33 +17,22 @@ training_models = pd.read_csv(start.TEMP_DIR + "training_models.csv")
 testing_models = pd.read_csv(start.TEMP_DIR + "testing_models.csv")
 
 # %%
+training = training_models
+testing = testing_models
 
 # %%
-training = training_models.merge(
-    training_spacy[["unique_id", "classification"]].rename(
-        columns={"classification": "score_spacy"}
-    ),
-    left_on="unique_id",
-    right_on="unique_id",
-)
-cols = ["unique_id", "tweet_id", "random_set", "relevant", "category", "text"]
-score_cols = [col for col in training if col.startswith("score")]
 
-# score_cols = ["score_spacy", "score_ridge"]
-cols = cols + score_cols
+# cols = ["unique_id", "tweet_id", "random_set", "relevant", "category", "text"]
+# score_cols = [col for col in training if col.startswith("score")]
 
-training = training[cols]
+# # score_cols = ["score_spacy", "score_ridge"]
+# cols = cols + score_cols
+
+# training = training[cols]
+# testing = testing[cols]
 
 # %%
-testing = testing_models.merge(
-    testing_spacy[["unique_id", "classification"]].rename(
-        columns={"classification": "score_spacy"}
-    ),
-    left_on="unique_id",
-    right_on="unique_id",
-)
 
-training = training[cols]
 
 # %%
 clf = LogisticRegression()
