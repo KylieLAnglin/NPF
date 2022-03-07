@@ -61,3 +61,20 @@ len(annotations)
 len(annotations[annotations.category == 1]) / len(annotations)
 len(annotations[annotations.category == 2]) / len(annotations)
 len(annotations[annotations.category == 3]) / len(annotations)
+
+# %%
+len(annotations)
+print(
+    len(annotations[annotations.category == 1])
+    / len(annotations[annotations.relevant == 1])
+)
+print(
+    len(annotations[annotations.category == 2])
+    / len(annotations[annotations.relevant == 1])
+)
+print(
+    len(annotations[annotations.category == 3])
+    / len(annotations[annotations.relevant == 1])
+)
+
+# %%

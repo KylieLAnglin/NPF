@@ -26,9 +26,10 @@ df["victim"] = np.where(df.spacy_victim > 0.5, 1, 0)
 df["date"] = pd.to_datetime(df.created, errors="coerce")
 df["month"] = df["date"].dt.month
 
-melted = df[["month", "hero", "villain", "victim"]].groupby("month").agg("sum")
-# %%
 df = df.set_index("date")
+
+
+# %%
 monthly = df[["hero", "villain", "victim"]].resample("M").sum()
 
 # %%
@@ -41,9 +42,9 @@ plt.legend()
 # %%
 daily = df[["hero", "villain", "victim"]].resample("D").sum()
 
-plt.plot(daily.index, daily.hero, label="Hero")
-plt.plot(daily.index, daily.villain, label="Villain")
-plt.plot(daily.index, daily.victim, label="Victim")
+# plt.plot(daily.index, daily.hero, label="Hero")
+# plt.plot(daily.index, daily.villain, label="Villain", color="orange")
+plt.plot(daily.index, daily.victim, label="Victim", color="green")
 plt.xticks(
     [
         "2020-03-01 00:00:00+00:00",
@@ -75,6 +76,7 @@ plt.xticks(
     ],
 )
 plt.legend()
+plt.ylim(0, 2500)
 plt.xlabel("Date")
 plt.ylabel("Number of Tweets")
 
