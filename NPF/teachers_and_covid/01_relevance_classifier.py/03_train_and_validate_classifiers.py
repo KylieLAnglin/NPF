@@ -334,7 +334,7 @@ testing["classification_count"] = (
     + testing.classification_rf
 )
 
-performance_statistics["Emsemble"] = classify.return_statistics(
+performance_statistics["Ensemble"] = classify.return_statistics(
     ground_truth=testing.relevant,
     scores=testing.classification_count,
     classification=testing.classification_rule,
@@ -360,8 +360,22 @@ for model in performance_statistics.keys():
     ws.cell(row=row, column=col).value = performance_statistics[model]["recall"]
     col = col + 1
     ws.cell(row=row, column=col).value = performance_statistics[model]["auc"]
+    col = col + 1
+    ws.cell(row=row, column=col).value = performance_statistics[model]["specificity"]
+    col = col + 1
+
     row = row + 1
 
 wb.save(file_path)
 
 # %%
+# Proportion of relevant tweets in narrowed corpus
+narrowed_test = testing[testing.classification_rule == 1]
+print(len(narrowed_test[narrowed_test.relevant == 1]) / len(narrowed_test))
+
+
+irrelevant_test = testing[testing.relevant == 0]
+print(
+    len(irrelevant_test[irrelevant_test.classification_rule == 0])
+    / len(irrelevant_test)
+)

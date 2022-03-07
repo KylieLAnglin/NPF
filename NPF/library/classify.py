@@ -12,6 +12,7 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     roc_auc_score,
+    confusion_matrix,
 )
 from zlib import crc32
 from sklearn.metrics._plot.confusion_matrix import plot_confusion_matrix
@@ -383,12 +384,15 @@ def return_statistics(ground_truth, scores, classification):
     recall = recall_score(y_true=ground_truth, y_pred=classification)
     f1 = f1_score(y_true=ground_truth, y_pred=classification)
     auc = roc_auc_score(ground_truth, scores)
+    tn, fp, fn, tp = confusion_matrix(ground_truth, classification).ravel()
+    specificity = tn / (tn + fp)
 
     performance = {
         "accuracy": accuracy,
         "precision": precision,
         "recall": recall,
         "auc": auc,
+        "specificity": specificity,
     }
 
     return performance
