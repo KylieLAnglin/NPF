@@ -179,12 +179,6 @@ def process_text_nltk(
     if lemma:
         tokens = [nltk.wordnet.WordNetLemmatizer().lemmatize(token) for token in tokens]
 
-    # if lemma:  # lemma needs to go first because spacy lemmatizer depends on context
-    #     doc = " ".join([ps.stem(token)])
-
-    # elif not lemma:
-    #     doc = " ".join([token.text for token in nlp(text)])
-
     if string_or_list != "list":
         doc = " ".join(tokens)
     else:

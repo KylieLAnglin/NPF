@@ -28,6 +28,7 @@ df["month"] = df["date"].dt.month
 
 df = df.set_index("date")
 
+# %%
 
 # %%
 monthly = df[["hero", "villain", "victim"]].resample("M").sum()

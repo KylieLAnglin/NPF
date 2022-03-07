@@ -72,6 +72,15 @@ df.to_csv(start.CLEAN_DIR + "tweets_final.csv")
 df["hero"] = np.where(df.spacy_hero > 0.5, 1, 0)
 df["villain"] = np.where(df.spacy_villain > 0.5, 1, 0)
 df["victim"] = np.where(df.spacy_victim > 0.5, 1, 0)
+df["other"] = np.where(df.spacy_other > 0.5, 1, 0)
+
+# %%
+print(df.hero.mean())
+print(df.villain.mean())
+print(df.victim.mean())
+print(df.other.mean())
+# %%
+
 
 df["date"] = pd.to_datetime(df.created, errors="coerce")
 df["month"] = df["date"].dt.month

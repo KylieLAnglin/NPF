@@ -8,7 +8,7 @@ from NPF.teachers_and_covid import start
 from NPF.library import process_text
 
 # %%
-df = pd.read_csv(start.MAIN_DIR + "annotations_characters.csv")
+df = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
 df = df.rename(
     columns={
         "hero": "tweet_hero",
@@ -54,6 +54,8 @@ grouped = matrix.groupby(["tweet_category"]).agg("sum")
 # %%
 words = grouped.T
 
-words = words.sort_values(by=3.0, ascending=False)
+hero_words = words.sort_values(by=1.0, ascending=False)
+villain_words = words.sort_values(by=2.0, ascending=False)
+victim_words = words.sort_values(by=3.0, ascending=False)
 
 # %%
