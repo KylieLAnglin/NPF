@@ -58,6 +58,8 @@ testing["spacy_victim"] = [label["VICTIM"] for label in categories]
 testing["spacy_other"] = [label["OTHER"] for label in categories]
 
 testing.to_csv(TEMP_DIR + "testing_characters_spacy.csv")
+
+
 # %%
 
 # apply the saved model
