@@ -10,7 +10,7 @@ CLEAN_DIR = "/Volumes/GoogleDrive/.shortcut-targets-by-id/1wL0tiiBznVSn5Gij9hYTi
 MODEL_DIR = "/Users/kla21002/textcat_tweets_characters/packages/en_textcat_main-0.0.0/en_textcat_demo/en_textcat_demo-0.0.0"
 TEMP_DIR = "/Users/kla21002/Dropbox/Active/NPF/data/"
 # %%
-tweets = pd.read_csv(CLEAN_DIR + "tweets_full.csv")
+tweets = pd.read_csv(CLEAN_DIR + "tweets_relevant.csv")
 tweets = tweets[
     [
         "unique_id",
