@@ -30,7 +30,7 @@ df = tweets.merge(
 df = df.merge(relevance, left_index=True, right_index=True)
 
 # %%
-df = df[(df.classification_rule == 1) | (df._merge == "both")]
+df = df[(df.classification == 1) | (df._merge == "both")]
 
 df = df.rename(
     columns={

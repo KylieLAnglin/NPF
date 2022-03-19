@@ -78,16 +78,18 @@ tweets["score_sgd"] = clf_sgd.decision_function(tweets.text)
 tweets["score_rf"] = [proba[1] for proba in clf_rf.predict_proba(tweets.text)]
 tweets["score_ridge"] = [proba[1] for proba in clf_ridge.predict_proba(tweets.text)]
 
-tweets["classification_rule"] = np.where(
-    (tweets.score_spacy > 0.5)
-    | (tweets.score_ridge > 0.5)
-    | (tweets.score_svm > 0.5)
-    | (tweets.score_sgd > 0.5)
-    | (tweets.score_nb > 0.5)
-    | (tweets.score_rf > 0.5),
-    1,
-    0,
-)
+# tweets["classification"] = np.where(
+#     (tweets.score_spacy > 0.5)
+#     | (tweets.score_ridge > 0.5)
+#     | (tweets.score_svm > 0.5)
+#     | (tweets.score_sgd > 0.5)
+#     | (tweets.score_nb > 0.5)
+#     | (tweets.score_rf > 0.5),
+#     1,
+#     0,
+# )
+
+tweets["classification"] = np.where(tweets.score_nb > 0.5, 1, 0)
 # %%
 tweets[
     [

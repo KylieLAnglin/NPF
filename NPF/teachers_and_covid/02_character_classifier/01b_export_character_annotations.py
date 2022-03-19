@@ -63,5 +63,3 @@ with open(
         f.write("\n")
 
 # %%
-
-# %%

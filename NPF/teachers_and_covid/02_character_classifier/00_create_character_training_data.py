@@ -11,14 +11,14 @@ tweet_classifications["unique_id"] = pd.to_numeric(
 tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
 
 tweets = tweets.merge(
-    tweet_classifications[["unique_id", "classification_rule"]],
+    tweet_classifications[["unique_id", "classification"]],
     left_on="unique_id",
     right_on="unique_id",
     how="left",
     indicator=True,
 )
 
-tweets = tweets[tweets.classification_rule == 1]
+tweets = tweets[tweets.classification == 1]
 
 # %%
 training_batch_5 = tweets[tweets.random_set == 5]
