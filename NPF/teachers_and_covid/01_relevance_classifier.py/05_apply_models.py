@@ -95,10 +95,12 @@ tweets[
     [
         "unique_id",
         "score_nb",
-        "score_cvm",
+        "score_svm",
         "score_sgd",
         "score_rf",
         "score_ridge",
-        "classification_rule",
+        "classification",
     ]
 ].to_csv(start.TEMP_DIR + "tweets_classified.csv", index=False)
+
+# %%

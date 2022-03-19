@@ -14,20 +14,26 @@ tweets = pd.read_csv(CLEAN_DIR + "tweets_relevant.csv")
 tweets = tweets[
     [
         "unique_id",
-        "text",
-        "created",
-        "likes",
-        "retweets",
-        "quotes",
-        "replies",
+        "tweet_text",
+        "tweet_created",
+        "tweet_likes",
+        "tweet_retweets",
+        "tweet_quotes",
+        "tweet_replies",
         "author_id",
-        "geo",
+        "tweet_geo",
         "random_set",
     ]
 ]
-tweets["text"] = [re.sub(r"[^\w\s]", "", s) for s in tweets.text]  # remove punctuation
-tweets["text"] = tweets.text.str.replace("\n", " ", regex=False)  # remove new line
-tweets["text"] = tweets.text.str.replace("\xa0", " ", regex=False)  # remove utf errors
+tweets["tweet_text"] = [
+    re.sub(r"[^\w\s]", "", s) for s in tweets.tweet_text
+]  # remove punctuation
+tweets["tweet_text"] = tweets.tweet_text.str.replace(
+    "\n", " ", regex=False
+)  # remove new line
+tweets["tweet_text"] = tweets.tweet_text.str.replace(
+    "\xa0", " ", regex=False
+)  # remove utf errors
 
 annotations = pd.read_csv(CLEAN_DIR + "annotations_characters.csv")
 annotations = annotations[
@@ -48,7 +54,7 @@ testing = df[df.random_set == 3]
 print("Loading from", MODEL_DIR)
 nlp = spacy.load(MODEL_DIR)
 categories = []
-for text in testing.text:
+for text in testing.tweet_text:
     doc = nlp(text)
     categories.append(doc.cats)
 
@@ -66,7 +72,7 @@ testing.to_csv(TEMP_DIR + "testing_characters_spacy.csv")
 print("Loading from", MODEL_DIR)
 nlp = spacy.load(MODEL_DIR)
 categories = []
-for text in training.text:
+for text in training.tweet_text:
     doc = nlp(text)
     categories.append(doc.cats)
 
@@ -83,7 +89,7 @@ training.to_csv(TEMP_DIR + "training_characters_spacy.csv")
 print("Loading from", MODEL_DIR)
 nlp = spacy.load(MODEL_DIR)
 categories = []
-for text in tweets.text:
+for text in tweets.tweet_text:
     doc = nlp(text)
     categories.append(doc.cats)
 
