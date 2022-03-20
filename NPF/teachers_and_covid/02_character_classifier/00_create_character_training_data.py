@@ -4,21 +4,17 @@ from NPF.teachers_and_covid import start
 from NPF.library import classify
 
 # %%
-tweet_classifications = pd.read_csv(start.TEMP_DIR + "tweets_classified.csv")
-tweet_classifications["unique_id"] = pd.to_numeric(
-    tweet_classifications.unique_id, errors="coerce"
-)
-tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
+all_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
+relevant_tweets = pd.read_csv(start.TEMP_DIR + "tweets_relevant.csv")
 
-tweets = tweets.merge(
-    tweet_classifications[["unique_id", "classification"]],
+tweets = relevant_tweets.merge(
+    all_tweets[["unique_id"]],
     left_on="unique_id",
     right_on="unique_id",
     how="left",
     indicator=True,
 )
 
-tweets = tweets[tweets.classification == 1]
 
 # %%
 training_batch_5 = tweets[tweets.random_set == 5]

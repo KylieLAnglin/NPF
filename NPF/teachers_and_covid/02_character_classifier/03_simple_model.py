@@ -23,13 +23,7 @@ tweets = pd.read_csv(start.TEMP_DIR + "features.csv")
 
 # %%
 
-liwc = pd.read_csv(start.TEMP_DIR + "features_liwc.csv")
-liwc = liwc.add_prefix("liwc_")
-liwc = liwc.rename(columns={"liwc_A": "unique_id", "liwc_B": "tweet_text"})
-liwc = liwc.drop("tweet_text", 1)
 
-df = tweets.merge(liwc, left_on="unique_id", right_on="unique_id")
-df = df[df._merge == "both"]
 df = df.set_index("unique_id")
 
 heros = df[df.tweet_hero == 1]
