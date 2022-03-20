@@ -26,9 +26,6 @@ df["classification_victim"] = np.where(df.spacy_victim > 0.5, 1, 0)
 
 
 # %%
-
-
-# %%
 performance_statistics = {}
 
 performance_statistics["hero"] = classify.return_statistics(

@@ -30,6 +30,7 @@ df = annotations.merge(
     classifications[
         ["unique_id", "classifier_hero", "classifier_villain", "classifier_victim"]
     ],
+    how="left",
     left_on="unique_id",
     right_on="unique_id",
 )
@@ -46,3 +47,5 @@ print(df.gold_villain.mean())
 print("Classifier vs Gold Standard Victim Proportions")
 print(df.classifier_victim.mean())
 print(df.gold_victim.mean())
+
+# %%
