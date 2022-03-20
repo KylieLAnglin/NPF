@@ -1,10 +1,7 @@
 # %%
-# %%
-from cgi import test
-import re
+
 import pandas as pd
 import numpy as np
-import pickle
 from openpyxl import load_workbook
 
 
@@ -71,5 +68,3 @@ for model in performance_statistics.keys():
     row = row + 1
 
 wb.save(file_path)
-
-# %%

@@ -7,33 +7,22 @@ from NPF.teachers_and_covid import start
 import matplotlib.pyplot as plt
 
 # %%
-annotations = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
-annotations["gold_hero"] = np.where(annotations.category == 1, 1, 0)
-annotations["gold_villain"] = np.where(annotations.category == 2, 1, 0)
-annotations["gold_victim"] = np.where(annotations.category == 3, 1, 0)
+testing = pd.read_csv(start.TEMP_DIR + "testing_characters_spacy.csv")
+training = pd.read_csv(start.TEMP_DIR + "training_characters_spacy.csv")
 
-# annotations = annotations[annotations.random_set == 3]
-# %%
-classifications = pd.read_csv(start.CLEAN_DIR + "tweets_final.csv")
-# classifications = classifications[classifications.random_set == 3]
+df = pd.concat([training, testing])
+df = df[df.category.isin([1, 2, 3, 4])]
 
-classifications["classifier_hero"] = np.where(classifications.spacy_hero > 0.5, 1, 0)
-classifications["classifier_villain"] = np.where(
-    classifications.spacy_villain > 0.5, 1, 0
-)
-classifications["classifier_victim"] = np.where(
-    classifications.spacy_victim > 0.5, 1, 0
-)
 
-# %%
-df = annotations.merge(
-    classifications[
-        ["unique_id", "classifier_hero", "classifier_villain", "classifier_victim"]
-    ],
-    how="left",
-    left_on="unique_id",
-    right_on="unique_id",
-)
+df["gold_hero"] = np.where(df.category == 1, 1, 0)
+df["gold_villain"] = np.where(df.category == 2, 1, 0)
+df["gold_victim"] = np.where(df.category == 3, 1, 0)
+
+
+df["classifier_hero"] = np.where(df.spacy_hero > 0.5, 1, 0)
+df["classifier_villain"] = np.where(df.spacy_villain > 0.5, 1, 0)
+df["classifier_victim"] = np.where(df.spacy_victim > 0.5, 1, 0)
+
 # %%
 print("Classifier vs Gold Standard Hero Proportions")
 print(df.classifier_hero.mean())
