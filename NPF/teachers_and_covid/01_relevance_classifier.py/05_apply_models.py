@@ -91,16 +91,35 @@ tweets["score_ridge"] = [proba[1] for proba in clf_ridge.predict_proba(tweets.te
 
 tweets["classification"] = np.where(tweets.score_nb > 0.5, 1, 0)
 # %%
-tweets[
+tweets_relevant = tweets[tweets.classification == 1]
+
+tweets_relevant = tweets_relevant.rename(
+    columns={
+        "text": "tweet_text",
+        "created": "tweet_created",
+        "likes": "tweet_likes",
+        "retweets": "tweet_retweets",
+        "quotes": "tweet_quotes",
+        "replies": "tweet_replies",
+        "author_id": "author_id",
+        "geo": "tweet_geo",
+    }
+)
+
+tweets_relevant = tweets_relevant[
     [
         "unique_id",
-        "score_nb",
-        "score_svm",
-        "score_sgd",
-        "score_rf",
-        "score_ridge",
-        "classification",
+        "tweet_text",
+        "tweet_created",
+        "tweet_likes",
+        "tweet_retweets",
+        "tweet_quotes",
+        "tweet_replies",
+        "tweet_geo",
+        "author_id",
+        "random_set",
     ]
-].to_csv(start.TEMP_DIR + "tweets_classified.csv", index=False)
+]
+tweets_relevant.to_csv(start.TEMP_DIR + "tweets_relevant.csv", index=False)
 
 # %%
