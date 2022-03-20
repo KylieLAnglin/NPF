@@ -10,9 +10,8 @@ import matplotlib.pyplot as plt
 testing = pd.read_csv(start.TEMP_DIR + "testing_characters_spacy.csv")
 training = pd.read_csv(start.TEMP_DIR + "training_characters_spacy.csv")
 
-df = pd.concat([training, testing])
+df = pd.concat([testing])
 df = df[df.category.isin([1, 2, 3, 4])]
-
 
 df["gold_hero"] = np.where(df.category == 1, 1, 0)
 df["gold_villain"] = np.where(df.category == 2, 1, 0)
