@@ -9,6 +9,10 @@ df = pd.read_csv(
     encoding="utf-8",
 )
 
+df["relevant"] = ""
+df["category"] = 0
+df["notes"] = ""
+
 df_to_code = df[df.random_set == 1]
 df_to_code = df_to_code[
     ["unique_id", "tweet_id", "random_set", "text", "relevant", "category", "notes"]

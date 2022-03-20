@@ -18,9 +18,7 @@ df = df.sample(len(df), random_state=100)
 
 np.random.seed(5)
 df["random_set"] = np.random.randint(1, 300, size=len(df))
-df["relevant"] = ""
-df["category"] = 0
-df["notes"] = ""
+
 
 df.to_csv(
     start.CLEAN_DIR + "tweets_full.csv",
