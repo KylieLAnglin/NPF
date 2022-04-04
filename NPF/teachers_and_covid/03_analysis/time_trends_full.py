@@ -45,7 +45,7 @@ daily = df[["hero", "villain", "victim"]].resample("D").sum()
 
 # plt.plot(daily.index, daily.hero, label="Hero")
 # plt.plot(daily.index, daily.villain, label="Villain", color="orange")
-plt.plot(daily.index, daily.victim, label="Victim", color="green")
+plt.plot(daily.index, daily.hero, label="Hero Tweets", color="black")
 plt.xticks(
     [
         "2020-03-01 00:00:00+00:00",
@@ -77,7 +77,7 @@ plt.xticks(
     ],
 )
 plt.legend()
-plt.ylim(0, 2500)
+plt.ylim(0, 1000)
 plt.xlabel("Date")
 plt.ylabel("Number of Tweets")
 
