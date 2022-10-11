@@ -46,6 +46,16 @@ df_to_code = df_to_code[
     ["unique_id", "tweet_id", "random_set", "text", "relevant", "category", "notes"]
 ]
 df_to_code.to_csv(
-    start.CLEAN_DIR + "training_batch4.csv",
+    start.CLEAN_DIR + "temp/training_batch4.csv",
+    index=False,
+)
+
+
+df_to_code = df[df.random_set == 5]
+df_to_code = df_to_code[
+    ["unique_id", "tweet_id", "random_set", "text", "relevant", "category", "notes"]
+]
+df_to_code.to_csv(
+    start.CLEAN_DIR + "temp/validation_relevance_batch1.csv",
     index=False,
 )
