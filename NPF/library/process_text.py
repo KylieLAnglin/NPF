@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 import scipy
 from collections import Counter
-import liwc
 
 
 from sklearn.feature_extraction.text import CountVectorizer
