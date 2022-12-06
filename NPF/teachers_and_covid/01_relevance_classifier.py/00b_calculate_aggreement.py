@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+
 from sklearn.metrics import cohen_kappa_score
 import simpledorff
 
@@ -62,8 +63,21 @@ annotations.loc[:, "agree"] = np.where(
 aggreement = annotations.agree.mean()
 print(f"Agreement is {aggreement.round(2)}.")
 # %%
+annotations["either"] = np.where(
+    (annotations.relevant_A == 1) | (annotations.relevant_B == 1), 1, 0
+)
+either = annotations.either.mean()
+print(f"One of us selected yes {either.round(2)} percent of the time")
 
-cohen_kappa_score(annotations.relevant_A, annotations.relevant_B)
+
+# %%
+agreement_either = annotations[annotations.either == 1].agree.mean()
+print(f"Of those we agreed {agreement_either.round(2)} percent of the time")
+
+# %%
+cohen = cohen_kappa_score(annotations.relevant_A, annotations.relevant_B)
+print(f"Cohen's Kappa {cohen.round(2)} ")
+
 # Minimal aggreement...
 
 # %%
