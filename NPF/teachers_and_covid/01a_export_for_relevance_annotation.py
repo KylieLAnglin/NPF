@@ -18,10 +18,10 @@ list(df["text"].sample(10, random_state=10))
 
 # %%
 df_to_code = df[df.random_set == 7]
-df_to_code = df_to_code[
-    ["unique_id", "tweet_id", "random_set", "text"]
-]
+df_to_code = df_to_code[["unique_id", "tweet_id", "random_set", "text"]]
 df_to_code.to_excel(
-    start.CLEAN_DIR + "temp/relevance_key_words.xlsx",
+    start.MAIN_DIR + "temp/relevance_key_words.xlsx",
     index=False,
 )
+
+# %%
