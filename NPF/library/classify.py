@@ -12,10 +12,9 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     roc_auc_score,
-    confusion_matrix,
+    ConfusionMatrixDisplay,
 )
 from zlib import crc32
-from sklearn.metrics._plot.confusion_matrix import plot_confusion_matrix
 import seaborn as sns
 from pprint import pprint
 from time import time

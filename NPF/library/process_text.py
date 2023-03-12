@@ -239,7 +239,7 @@ def vectorize_text(
         )
 
     X = vec.fit_transform(docs)
-    matrix = pd.DataFrame(X.toarray(), columns=vec.get_feature_names(), index=df.index)
+    matrix = pd.DataFrame(X.toarray(), columns=vec.get_feature_names_out(), index=df.index)
 
     print("Number of words: ", len(matrix.columns))
 

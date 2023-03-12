@@ -19,11 +19,10 @@ from sklearn.metrics import (
 
 # %%
 
-tweets = pd.read_csv(start.TEMP_DIR + "features.csv")
+tweets = pd.read_csv(start.MAIN_DIR + "data/temp/features.csv")
 
 # %%
-
-
+df = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
 df = df.set_index("unique_id")
 
 heros = df[df.tweet_hero == 1]

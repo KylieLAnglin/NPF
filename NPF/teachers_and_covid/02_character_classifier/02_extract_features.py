@@ -8,8 +8,9 @@ from NPF.teachers_and_covid import start
 from NPF.library import process_text
 
 # %%
-df = pd.read_csv(start.TEMP_DIR + "tweets_relevant.csv")
-
+df = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
+df = df.rename(columns={"text": "tweet_text"})
+df = df[["unique_id", "tweet_text"]]
 # %% Cleaned Text
 df["tweet_text_clean"] = [
     process_text.process_text_nltk(
@@ -25,7 +26,7 @@ df["tweet_text_clean"] = [
 
 
 # %%
-liwc = pd.read_csv(start.TEMP_DIR + "features_liwc.csv")
+liwc = pd.read_csv(start.MAIN_DIR + "data/temp/features_liwc.csv")
 liwc = liwc.add_prefix("liwc_")
 liwc = liwc.rename(columns={"liwc_unique_id": "unique_id", "liwc_text": "tweet_text"})
 liwc = liwc.drop("tweet_text", 1)
@@ -84,6 +85,6 @@ feature_df = feature_df.merge(term_matrix, left_index=True, right_index=True)
 feature_df = feature_df.merge(phrases, left_index=True, right_index=True)
 
 # %%
-feature_df.to_csv(start.TEMP_DIR + "features.csv")
+feature_df.to_csv(start.MAIN_DIR + "data/temp/features.csv")
 
 # %%
