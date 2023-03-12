@@ -1,14 +1,7 @@
 # %%
-import string
-import unicodedata
 
 import pandas as pd
 import numpy as np
-
-import nltk
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
-from nltk.stem import SnowballStemmer
 
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
@@ -22,8 +15,8 @@ from NPF.teachers_and_covid import start
 # %% Read
 df = pd.read_csv(start.MAIN_DIR + "temp/creating_dictionary.csv")
 
-
 # %% Process
+
 df["text_clean"] = df.text.apply(lambda x: x.lower())
 df["text_clean"] = df.text_clean.apply(process_dictionary.remove_punctuation)
 df["text_clean"] = df.text_clean.apply(process_dictionary.remove_non_unicode)
@@ -56,34 +49,29 @@ for word in cleaned_key_words:
 
 df[df.training == 1].to_excel(start.MAIN_DIR + "temp/training_key_words.xlsx")
 
-# %% Precision in training data
-word_precision_df = df[df.training == 1]
-for word in cleaned_key_words:
-    word_precision_df[word] = np.where(word_precision_df[word] == 0, np.nan, word_precision_df.relevant)
-precision_scores = pd.DataFrame(word_precision_df[cleaned_key_words].mean())
-precision_scores = precision_scores.rename(columns={0:"word_precision"})
-precision_scores.sort_values(by = "word_precision", ascending=False)
-
 
 # %% Precision in testing data
 word_precision_df = df[df.testing == 1]
 for word in cleaned_key_words:
     word_precision_df[word] = np.where(word_precision_df[word] == 0, np.nan, word_precision_df.relevant)
 precision_scores = pd.DataFrame(word_precision_df[cleaned_key_words].mean())
-precision_scores = precision_scores.rename(columns={0:"word_precision"})
-precision_scores.sort_values(by = "word_precision", ascending=False)
-
+precision_scores = precision_scores.reset_index()
+precision_scores = precision_scores.rename(columns={0:"word_precision", "index": "word"})
+precision_scores = precision_scores.sort_values(by = "word_precision", ascending=False)
+precision_scores
+# %%
+precision_scores.to_excel(start.RESULTS_DIR + "key_word_precision.xlsx", index=False)
+# %% Keep words with precision about 0.5
 reduced_key_words = list(precision_scores[precision_scores.word_precision > 0.5].index)
 
-# %% Testing performance
+# %% Validate
 
-testing = df[df.testing == 1]
-# testing['positive'] = testing[cleaned_key_words].max(axis=1)
+testing = df[df.validation == 1]
 testing['positive'] = testing[reduced_key_words].max(axis=1)
 
+print("Accuracy", accuracy_score(testing.relevant, testing.positive))
 print("Precision:", precision_score(testing.relevant, testing.positive))
 print("Recall", recall_score(testing.relevant, testing.positive))
-print("Accuracy", accuracy_score(testing.relevant, testing.positive))
 print("F1", f1_score(testing.relevant, testing.positive))
 
 

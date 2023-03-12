@@ -17,7 +17,7 @@ from sklearn.metrics import f1_score
 
 
 from NPF.teachers_and_covid import start
-
+np.random.seed(76)
 
 # %% Read
 df = pd.read_excel(start.ANNOTATIONS_DIR + "relevance_key_words_edited.xlsx")
@@ -31,7 +31,6 @@ print(df.relevant.mean())# %%
 
 # %% # %% Create validation set
 
-np.random.seed(570)
 
 df["random_order"] = np.random.randint(1, 10000, size=len(df))
 
@@ -53,7 +52,7 @@ df["group"] = np.where(df._validation == "both", "validation", "")
 # %% Create testing set
 training_and_test = df[df.validation == 0]
 
-testing = training_and_test.head(200)
+testing = training_and_test.head(250)
 
 df = df.merge(
     testing[["unique_id"]],
@@ -70,6 +69,7 @@ df.group.value_counts()
 df["testing"] = np.where(df.group == "testing", 1, 0)
 df["training"] = np.where(df.group == "training", 1, 0)
 
+df["fold"] = np.random.randint(1, 5, size=len(df))
 
 df.to_csv(start.MAIN_DIR + "temp/creating_dictionary.csv")
 

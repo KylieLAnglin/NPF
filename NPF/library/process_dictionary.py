@@ -15,7 +15,7 @@ def remove_punctuation(input_string):
     punctuations = string.punctuation
     
     # Remove all punctuation from the input string using list comprehension
-    no_punctuations = ''.join([char for char in input_string if char not in punctuations])
+    no_punctuations = ''.join([' ' if char in punctuations else char for char in input_string])
     
     return no_punctuations
 
@@ -61,9 +61,13 @@ def stem_string(input_string):
     
     # Stem each word in the input string using a list comprehension
     stemmed_words = [stemmer.stem(word) for word in words]
-    
+    final_stemmed_words = []
+    for word in stemmed_words:
+        if word.lower() == "covid19":
+            word = "covid"
+        final_stemmed_words.append(word)
     # Join the stemmed words back into a single string
-    stemmed_string = ' '.join(stemmed_words)
+    stemmed_string = ' '.join(final_stemmed_words)
     
     return stemmed_string
 
