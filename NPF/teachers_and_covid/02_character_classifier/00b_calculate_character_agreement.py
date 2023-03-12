@@ -10,30 +10,26 @@ from NPF.teachers_and_covid import start
 
 
 # %%
-tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv", low_memory=False)
-tweets = tweets[
-    [
-        "unique_id",
-        "text",
-        "created",
-        "likes",
-        "retweets",
-        "quotes",
-        "replies",
-        "author_id",
-        "geo",
-        "random_set",
-    ]
-]
+all_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
+relevant_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
+relevant_tweets = relevant_tweets[relevant_tweets.positive == 1]
+tweets = relevant_tweets.merge(
+    all_tweets[["unique_id"]],
+    left_on="unique_id",
+    right_on="unique_id",
+    how="left",
+    indicator=True,
+)
+
 # %%
 annotations_A = pd.read_csv(
-    start.CLEAN_DIR + "annotations/validation_batch1_annotated_JE.csv",
+    start.ANNOTATIONS_DIR + "validation_batch1_annotated_JE.csv",
     encoding="utf-8",
 )
 annotations_A["annotator"] = "A"
 
 annotations_B = pd.read_csv(
-    start.CLEAN_DIR + "annotations/validation_batch1_annotated_KA.csv",
+    start.ANNOTATIONS_DIR + "validation_batch1_annotated_KA.csv",
     encoding="ISO-8859-1",
 )
 annotations_B["annotator"] = "B"
@@ -57,8 +53,16 @@ annotations = annotations_A[
     left_on=["unique_id", "tweet_id"],
     right_on=["unique_id", "tweet_id"],
 )
+
+
+
 # %%
 annotations = annotations.head(500)
+# NOTE: Un comment for only updated relevant tweets
+# annotations = annotations.merge(tweets[["unique_id", "positive"]], how="inner", on="unique_id")
+
+# %%
+
 annotations.loc[:, "category_A"] = np.where(
     annotations.category_A.isin([1, 2, 3]), annotations.category_A, 0
 )
