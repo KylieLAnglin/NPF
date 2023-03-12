@@ -32,7 +32,13 @@ df["text_clean"] = df.text.apply(lambda x: x.lower())
 df["text_clean"] = df.text_clean.apply(process_dictionary.remove_punctuation)
 df["text_clean"] = df.text_clean.apply(process_dictionary.remove_non_unicode)
 df["text_clean"] = df.text_clean.apply(process_dictionary.stem_string)
+# %%
 
+for word in key_words:
+    df[word] = np.where(df.text_clean.str.contains(word), 1, 0)
+
+# %%
 df['positive'] = df[key_words].max(axis=1)
 
+df.to_csv(start.CLEAN_DIR + "tweets_relevant.csv", index=False)
 # %%
