@@ -39,7 +39,6 @@ for word in key_words:
 
 # %%
 df['positive'] = df[key_words].max(axis=1)
-
-
+df = df[["unique_id", "text", "created", "likes", "quotes", "replies", "author_id", "geo", "random_set", "positive"]]
 df[df.positive == 1].to_csv(start.CLEAN_DIR + "tweets_relevant.csv", index=False)
 # %%

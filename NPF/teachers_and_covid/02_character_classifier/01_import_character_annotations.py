@@ -26,26 +26,26 @@ tweets = tweets[
     ]
 ]
 
-relevance_annotations = pd.read_csv(start.CLEAN_DIR + "annotations.csv")
-relevance_annotations = relevance_annotations[["unique_id", "relevant", "category"]]
+# relevance_annotations = pd.read_csv(start.CLEAN_DIR + "annotations.csv")
+# relevance_annotations = relevance_annotations[["unique_id", "relevant", "category"]]
 
 character_annotations5 = pd.read_csv(
-    start.CLEAN_DIR + "annotations/training_batch5_annotated.csv"
+    start.ANNOTATIONS_DIR + "training_batch5_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
 character_annotations6 = pd.read_csv(
-    start.CLEAN_DIR + "annotations/training_batch6_annotated.csv"
+    start.ANNOTATIONS_DIR + "training_batch6_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
 character_annotations7 = pd.read_csv(
-    start.CLEAN_DIR + "annotations/training_batch7_annotated.csv"
+    start.ANNOTATIONS_DIR + "training_batch7_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
 character_annotations8 = pd.read_csv(
-    start.CLEAN_DIR + "annotations/training_batch8_annotated.csv"
+    start.ANNOTATIONS_DIR + "training_batch8_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
 # character_annotations9 = pd.read_csv(
 #     start.CLEAN_DIR + "annotations/training_batch9_annotated.csv"
 # )[["unique_id", "category", "irrelevant"]]
 character_annotations10 = pd.read_csv(
-    start.CLEAN_DIR + "annotations/training_batch10_annotated.csv"
+    start.ANNOTATIONS_DIR + "training_batch10_annotated.csv"
 )[["unique_id", "category", "irrelevant"]]
 
 
@@ -60,20 +60,20 @@ character_annotations = pd.concat(
     ]
 )
 
-df = pd.concat(
-    [
-        relevance_annotations,
-        character_annotations,
-    ]
-)
+# df = pd.concat(
+#     [
+#         relevance_annotations,
+#         character_annotations,
+#     ]
+# )
 
-df = df.merge(tweets, left_on=["unique_id"], right_on=["unique_id"])
+df = character_annotations.merge(tweets, left_on=["unique_id"], right_on=["unique_id"], how="left")
 
 
 # %%
 df = df[df.category.isin([1, 2, 3, 4])]
-df = df[(df.relevant != 0)]
-df = df[df.irrelevant != 1]
+# df = df[(df.relevant != 0)]
+# df = df[df.irrelevant != 1]
 
 # %%
 
@@ -87,3 +87,5 @@ df.to_csv(
     start.CLEAN_DIR + "annotations_characters.csv",
     encoding="utf-8",
 )
+
+# %%

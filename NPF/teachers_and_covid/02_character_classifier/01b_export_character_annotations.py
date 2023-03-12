@@ -7,6 +7,7 @@ import pickle
 
 from NPF.teachers_and_covid import start
 
+# NOTE: Need to update to new computer
 
 # %%
 df = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
