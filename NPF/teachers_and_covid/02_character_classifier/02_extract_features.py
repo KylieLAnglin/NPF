@@ -82,7 +82,6 @@ lsa_matrix = lsa_matrix.add_prefix("lsa_")
 feature_df = df.merge(liwc, left_index=True, right_index=True, how="left")
 feature_df = feature_df.merge(lsa_matrix, left_index=True, right_index=True)
 feature_df = feature_df.merge(term_matrix, left_index=True, right_index=True)
-feature_df = feature_df.merge(phrases, left_index=True, right_index=True)
 
 # %%
 feature_df.to_csv(start.MAIN_DIR + "data/temp/features.csv")

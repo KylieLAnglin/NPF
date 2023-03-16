@@ -8,7 +8,6 @@ from scipy import rand
 
 from NPF.teachers_and_covid import start
 
-
 # %%
 tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
 tweets = tweets[

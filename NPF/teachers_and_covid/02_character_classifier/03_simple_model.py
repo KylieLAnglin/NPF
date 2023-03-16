@@ -19,15 +19,21 @@ from sklearn.metrics import (
 
 # %%
 
-tweets = pd.read_csv(start.MAIN_DIR + "data/temp/features.csv")
+features = pd.read_csv(start.MAIN_DIR + "data/temp/features.csv")
 
 # %%
 df = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
 df = df.set_index("unique_id")
+df = df.rename(columns={"hero": "tweet_hero", "villain": "tweet_villain", "victim": "tweet_victim", "other": "tweet_other"})
 
-heros = df[df.tweet_hero == 1]
+df = df.merge(features, how="left", on="unique_id")
+
+
+heroes = df[df.tweet_hero == 1]
 victims = df[df.tweet_victim == 1]
 villains = df[df.tweet_villain == 1]
+
+
 # %%
 character_words = classify.character_words
 
