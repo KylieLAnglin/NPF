@@ -17,18 +17,24 @@ from sklearn.metrics import (
     f1_score,
 )
 
+# %% Temp
+
+annotations = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
+relevant_tweets = pd.read_csv(start.MAIN_DIR + "data/clean/tweets_relevant.csv")
+
+relevant_annotations = relevant_tweets.merge(annotations, how= "inner", on = "unique_id")
 # %%
 
-features = pd.read_csv(start.MAIN_DIR + "data/temp/features.csv")
-
+feature_df = pd.read_csv(start.MAIN_DIR + "data/clean/tweets_relevant_features.csv")
+feature_df["unique_id"] = feature_df.unique_id.astype(int)
 # %%
 df = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
 df = df.set_index("unique_id")
-df = df.rename(columns={"hero": "tweet_hero", "villain": "tweet_villain", "victim": "tweet_victim", "other": "tweet_other"})
-
-df = df.merge(features, how="left", on="unique_id")
-
-
+df = df.rename(columns={"text": "tweet_text", "hero": "tweet_hero", "villain": "tweet_villain", "victim": "tweet_victim", "other": "tweet_other"})
+df = df[["random_set", "tweet_hero", "tweet_villain", "tweet_victim"]]
+df = df.merge(feature_df, how="left", on="unique_id", indicator=True)
+df._merge.value_counts()
+# %%
 heroes = df[df.tweet_hero == 1]
 victims = df[df.tweet_victim == 1]
 villains = df[df.tweet_villain == 1]

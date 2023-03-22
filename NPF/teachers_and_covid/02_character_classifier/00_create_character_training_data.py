@@ -6,10 +6,25 @@ from NPF.teachers_and_covid import start
 # %%
 # NOTE: This is not up to date. 
 # Annotations were applied to previous relevance rules. 
+relevant_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
 
+batch1 = relevant_tweets[relevant_tweets.random_set < 8]
+batch2 = relevant_tweets[(relevant_tweets.random_set < 17) & (relevant_tweets.random_set > 8)]
+
+batch = batch1.append(batch2)
+batch = batch.head(3000)
+
+jessica = batch.head(1000)
+jessica["annotator"] = "JG"
+joe = batch.tail(2000).head(1000)
+joe["annotator"] = "JE"
+kylie = batch.tail(1000)
+kylie["annotator"] = "KLA"
+
+annotations = jessica.append(joe).append(kylie)
+annotations[["unique_id", "annotator", "text", ]].to_excel(start.MAIN_DIR + "data/temp/character_annotations.xlsx", index=False)
 # %%
 all_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
-relevant_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
 relevant_tweets = relevant_tweets[relevant_tweets.positive == 1]
 tweets = relevant_tweets.merge(
     all_tweets[["unique_id"]],
