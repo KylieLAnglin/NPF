@@ -9,9 +9,15 @@ from NPF.teachers_and_covid import start
 relevant_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
 
 batch1 = relevant_tweets[relevant_tweets.random_set < 8]
-batch2 = relevant_tweets[(relevant_tweets.random_set < 17) & (relevant_tweets.random_set > 8)]
-
+batch2 = relevant_tweets[(relevant_tweets.random_set < 18) & (relevant_tweets.random_set > 8)]
 batch = batch1.append(batch2)
+
+# %%
+triple_code = batch.tail(len(batch) - 3000)
+triple_code[["unique_id", "text", ]].to_excel(start.MAIN_DIR + "data/temp/character_annotations_for_triple_coding.xlsx", index=False)
+
+
+# %%
 batch = batch.head(3000)
 
 jessica = batch.head(1000)
@@ -24,15 +30,15 @@ kylie["annotator"] = "KLA"
 annotations = jessica.append(joe).append(kylie)
 annotations[["unique_id", "annotator", "text", ]].to_excel(start.MAIN_DIR + "data/temp/character_annotations.xlsx", index=False)
 # %%
-all_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
-relevant_tweets = relevant_tweets[relevant_tweets.positive == 1]
-tweets = relevant_tweets.merge(
-    all_tweets[["unique_id"]],
-    left_on="unique_id",
-    right_on="unique_id",
-    how="left",
-    indicator=True,
-)
+# all_tweets = pd.read_csv(start.CLEAN_DIR + "tweets_full.csv")
+# relevant_tweets = relevant_tweets[relevant_tweets.positive == 1]
+# tweets = relevant_tweets.merge(
+#     all_tweets[["unique_id"]],
+#     left_on="unique_id",
+#     right_on="unique_id",
+#     how="left",
+#     indicator=True,
+# )
 
 
 # %%
