@@ -37,15 +37,46 @@ kylie_codes["character"] = np.where(
 )
 kylie_codes = kylie_codes.rename(columns={"character": "character_KLA"})
 
+
+# %% ZM Codes
+zack_codes = pd.read_excel(
+    start.ANNOTATIONS_DIR + "character_annotations_for_triple_coding_ZM.xlsx"
+)
+zack_codes = zack_codes.head(100)
+zack_codes["character"] = np.where(
+    zack_codes.character.isnull(), "Other", zack_codes.character
+)
+zack_codes = zack_codes.rename(columns={"character": "character_ZM"})
+
+
+
+# %% TF Codes
+teagan_codes = pd.read_excel(
+    start.ANNOTATIONS_DIR + "character_annotations_for_triple_coding_TF.xlsx"
+)
+teagan_codes = teagan_codes.head(100)
+teagan_codes["character"] = np.where(
+    teagan_codes.character.isnull(), "Other", teagan_codes.character
+)
+teagan_codes = teagan_codes.rename(columns={"character": "character_TF"})
+
+
 # %% Merge to view
 df = kylie_codes[["unique_id", "character_KLA"]].merge(
     jessica_codes[["unique_id", "character_JG"]], how="outer", on=["unique_id"]
 )
 
 df = df.merge(
-    joe_codes[["unique_id", "character_JE", "text"]], how="outer", on=["unique_id"]
+    joe_codes[["unique_id", "character_JE"]], how="outer", on=["unique_id"]
 )
 
+df = df.merge(
+    zack_codes[["unique_id", "character_ZM"]], how="outer", on=["unique_id"]
+)
+
+df = df.merge(
+    teagan_codes[["unique_id", "character_TF", "text"]], how="outer", on=["unique_id"]
+)
 df.to_excel(
     start.ANNOTATIONS_DIR + "character_annotations_for_triple_coding_compare.xlsx"
 )
