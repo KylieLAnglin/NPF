@@ -11,6 +11,8 @@ from NPF.library import process_text
 df = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
 df = df.rename(columns={"text": "tweet_text"})
 df = df[["unique_id", "tweet_text"]]
+df = df.set_index("unique_id")
+df = df.sample(2000)
 # %% Cleaned Text
 df["tweet_text_clean"] = [
     process_text.process_text_nltk(
@@ -26,7 +28,7 @@ df["tweet_text_clean"] = [
 
 
 # %%
-liwc = pd.read_csv(start.MAIN_DIR + "data/temp/features_liwc.csv")
+liwc = pd.read_csv(start.CLEAN_DIR + "liwc.csv")
 liwc = liwc.add_prefix("liwc_")
 liwc = liwc.rename(columns={"liwc_unique_id": "unique_id", "liwc_text": "tweet_text"})
 liwc = liwc.drop("tweet_text", 1)
@@ -44,9 +46,10 @@ df["tone_compound"] = [
     analyzer.polarity_scores(tweet)["compound"] for tweet in df.tweet_text
 ]
 
+
 # %% Doc-Term Matrix
 term_matrix = process_text.vectorize_text(
-    df=df, text_col="tweet_text", remove_stopwords=True, lemma=True, min_df=5
+    df=df, text_col="tweet_text", remove_stopwords=True, lemma=True, min_df=10
 )
 
 # %% N-grams
@@ -70,7 +73,7 @@ for phrase in phrases.columns:
 phrases = phrases[columns]
 
 term_matrix = term_matrix.merge(phrases, left_index=True, right_index=True)
-
+term_matrix.to_csv(start.MAIN_DIR + "data/clean/matrix.csv", index=True)
 # %%
 lsa_matrix, word_weights = process_text.create_lsa_dfs(
     matrix=term_matrix, n_components=50
@@ -84,6 +87,34 @@ feature_df = feature_df.merge(lsa_matrix, left_index=True, right_index=True)
 feature_df = feature_df.merge(term_matrix, left_index=True, right_index=True)
 
 # %%
-feature_df.to_csv(start.MAIN_DIR + "data/temp/features.csv")
+feature_df.to_csv(start.MAIN_DIR + "data/clean/features.csv")
+
+# %% Export annotations matrix
+matrix = pd.read_csv(start.MAIN_DIR + "data/clean/matrix.csv", index_col="unique_id")
+annotations = pd.read_csv(
+    start.CLEAN_DIR + "annotations_characters.csv", index_col="unique_id"
+)
+
+df_annotations = annotations[["split", "text", "hero", "victim", "villain"]]
+df_annotations = df_annotations.rename(
+    columns={
+        "split": "tweet_split",
+        "text": "tweet_text",
+        "hero": "tweet_hero",
+        "villain": "tweet_villain",
+        "victim": "tweet_victim",
+    }
+)
+matrix_annotations = matrix[matrix.index.isin(annotations.index)]
+matrix_annotations = matrix_annotations[matrix_annotations.tweet_split != "validation"]
+matrix_annotations.to_csv(start.CLEAN_DIR + "matrix_annotations.csv", index=True)
+# %%
+features_annotations = feature_df[feature_df.index.isin(annotations.index)]
+features_annotations = features_annotations[
+    features_annotations.tweet_split != "validation"
+]
+features_annotations.to_csv(
+    start.MAIN_DIR + "data/clean/features_annotations.csv", index=True
+)
 
 # %%
