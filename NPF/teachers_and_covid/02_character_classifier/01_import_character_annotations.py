@@ -25,62 +25,58 @@ tweets = tweets[
     ]
 ]
 
-# relevance_annotations = pd.read_csv(start.CLEAN_DIR + "annotations.csv")
-# relevance_annotations = relevance_annotations[["unique_id", "relevant", "category"]]
-
-character_annotations5 = pd.read_csv(
-    start.ANNOTATIONS_DIR + "training_batch5_annotated.csv"
-)[["unique_id", "category", "irrelevant"]]
-character_annotations6 = pd.read_csv(
-    start.ANNOTATIONS_DIR + "training_batch6_annotated.csv"
-)[["unique_id", "category", "irrelevant"]]
-character_annotations7 = pd.read_csv(
-    start.ANNOTATIONS_DIR + "training_batch7_annotated.csv"
-)[["unique_id", "category", "irrelevant"]]
-character_annotations8 = pd.read_csv(
-    start.ANNOTATIONS_DIR + "training_batch8_annotated.csv"
-)[["unique_id", "category", "irrelevant"]]
-# character_annotations9 = pd.read_csv(
-#     start.CLEAN_DIR + "annotations/training_batch9_annotated.csv"
-# )[["unique_id", "category", "irrelevant"]]
-character_annotations10 = pd.read_csv(
-    start.ANNOTATIONS_DIR + "training_batch10_annotated.csv"
-)[["unique_id", "category", "irrelevant"]]
-
-
-character_annotations = pd.concat(
-    [
-        character_annotations5,
-        character_annotations6,
-        character_annotations7,
-        character_annotations8,
-        # character_annotations9,
-        character_annotations10,
-    ]
+character_annotations = pd.read_excel(
+    start.ANNOTATIONS_DIR + "character_annotations_TF.xlsx"
 )
 
-# df = pd.concat(
-#     [
-#         relevance_annotations,
-#         character_annotations,
-#     ]
-# )
-
-df = character_annotations.merge(tweets, left_on=["unique_id"], right_on=["unique_id"], how="left")
-
-
-# %%
-df = df[df.category.isin([1, 2, 3, 4])]
-# df = df[(df.relevant != 0)]
-# df = df[df.irrelevant != 1]
-
 # %%
 
-df["hero"] = np.where(df.category == 1, 1, 0)
-df["villain"] = np.where(df.category == 2, 1, 0)
-df["victim"] = np.where(df.category == 3, 1, 0)
-df["other"] = np.where(df.category == 4, 1, 0)
 
+df_merge = character_annotations[["unique_id", "character", "character_final"]].merge(
+    tweets, left_on=["unique_id"], right_on=["unique_id"], how="left"
+)
+
+df_merge = df_merge.sort_values(by="random_set")
+
+training = df_merge.head(2400)
+training["split"] = "training"
+
+remaining = df_merge.tail(600)
+testing = remaining.head(300)
+testing["split"] = "testing"
+
+validation = remaining.tail(300)
+validation["split"] = "validation"
+# %%
+df = pd.concat([training, testing, validation])
+df.split.value_counts()
+
+# %%
+df.character.value_counts()
+
+df["tweet_hero"] = np.where(
+    (df.character == "Hero")
+    | (df.character == "Hero and victim")
+    | (df.character == "Hero and villain"),
+    1,
+    0,
+)
+
+df["tweet_victim"] = np.where(
+    (df.character == "Victim")
+    | (df.character == "Hero and victim")
+    | (df.character == "Vicim and villain"),
+    1,
+    0,
+)
+
+df["tweet_villain"] = np.where(
+    (df.character == "Villain")
+    | (df.character == "Hero and villain")
+    | (df.character == "Vicim and villain"),
+    1,
+    0,
+)
 
 df.to_csv(
     start.CLEAN_DIR + "annotations_characters.csv",
