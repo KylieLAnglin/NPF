@@ -11,7 +11,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 MODEL_NAME = "distilbert-base-uncased"  # alternative: "vinai/bertweet-base"
 EPOCHS = 3
 BATCH_SIZE = 32  # 0.61
-BATCH_SIZE = 64  # 0.54
+# BATCH_SIZE = 64  # 0.54
 
 LEARNING_RATE = 1e-5
 NUM_LABELS = 4  # Don't change
