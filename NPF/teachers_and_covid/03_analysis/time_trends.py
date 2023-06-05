@@ -1,50 +1,98 @@
 # %%
+
 import pandas as pd
 import numpy as np
-
 from NPF.teachers_and_covid import start
 import matplotlib.pyplot as plt
 
-# %%
-df = pd.read_csv(start.CLEAN_DIR + "annotations_characters.csv")
-df["hero"] = np.where(df.category == 1, 1, 0)
-df["villain"] = np.where(df.category == 2, 1, 0)
-df["victim"] = np.where(df.category == 3, 1, 0)
+MAX_TWEETS = 800
 
-df["date"] = pd.to_datetime(df.created)
+df = pd.read_csv(start.CLEAN_DIR + "tweets_relevant_labeled.csv")
+df["hero"] = np.where(df.character_classification == "Hero", 1, 0)
+df["victim"] = np.where(df.character_classification == "Victim", 1, 0)
+df["villain"] = np.where(df.character_classification == "Villain", 1, 0)
+
+df["date"] = pd.to_datetime(df.created, errors="coerce")
 df["month"] = df["date"].dt.month
 
-melted = df[["month", "hero", "villain", "victim"]].groupby("month").agg("sum")
-# %%
 df = df.set_index("date")
-monthly = df[["hero", "villain", "victim"]].resample("M").sum()
 
-# %%
-plt.plot(monthly.index, monthly.hero, label="Hero")
-plt.plot(monthly.index, monthly.villain, label="Villain")
-plt.plot(monthly.index, monthly.victim, label="Victim")
-plt.legend()
-# %%
-
-# %%
 daily = df[["hero", "villain", "victim"]].resample("D").sum()
 
-plt.plot(daily.index, daily.hero, label="Hero")
-plt.plot(daily.index, daily.villain, label="Villain")
-plt.plot(daily.index, daily.victim, label="Victim")
-plt.legend()
+fig, axs = plt.subplots(2, 2, figsize=(10, 8))
 
-# %%
-df2 = df
-df2["hero"] = df2.hero * df2.likes
-df2["villain"] = df2.villain * df2.likes
-df2["victim"] = df2.victim * df2.likes
+# Plot Hero Tweets
+axs[0, 0].plot(daily.index, daily.hero, label="Hero Tweets", color="black")
+axs[0, 0].set_xticks([
+    "2020-03-01 00:00:00+00:00",
+    "2020-04-01 00:00:00+00:00",
+    "2020-05-01 00:00:00+00:00",
+    "2020-06-01 00:00:00+00:00",
+    "2020-07-01 00:00:00+00:00",
+    "2020-08-01 00:00:00+00:00",
+    "2020-09-01 00:00:00+00:00",
+    "2020-10-01 00:00:00+00:00",
+    "2020-11-01 00:00:00+00:00",
+    "2020-12-01 00:00:00+00:00",
+    "2021-01-01 00:00:00+00:00",
+    "2021-02-01 00:00:00+00:00",
+])
+axs[0, 0].set_xticklabels([
+    "3-20", "4-20", "5-20", "6-20", "7-20", "8-20", "9-20", "10-20", "11-20", "12-20", "1-21", "2-21",
+])
+axs[0, 0].legend()
+axs[0, 0].set_ylim(0, MAX_TWEETS)
+axs[0, 0].set_xlabel("Date")
+axs[0, 0].set_ylabel("Number of Tweets")
 
-daily = df2[["hero", "villain", "victim"]].resample("D").sum()
+# Plot Victim Tweets
+axs[0, 1].plot(daily.index, daily.victim, label="Victim Tweets", color="black")
+axs[0, 1].set_xticks([
+    "2020-03-01 00:00:00+00:00",
+    "2020-04-01 00:00:00+00:00",
+    "2020-05-01 00:00:00+00:00",
+    "2020-06-01 00:00:00+00:00",
+    "2020-07-01 00:00:00+00:00",
+    "2020-08-01 00:00:00+00:00",
+    "2020-09-01 00:00:00+00:00",
+    "2020-10-01 00:00:00+00:00",
+    "2020-11-01 00:00:00+00:00",
+    "2020-12-01 00:00:00+00:00",
+    "2021-01-01 00:00:00+00:00",
+    "2021-02-01 00:00:00+00:00",
+])
+axs[0, 1].set_xticklabels([
+    "3-20", "4-20", "5-20", "6-20", "7-20", "8-20", "9-20", "10-20", "11-20", "12-20", "1-21", "2-21",
+])
+axs[0, 1].legend()
+axs[0, 1].set_ylim(0, MAX_TWEETS)
+axs[0, 1].set_xlabel("Date")
+axs[0, 1].set_ylabel("Number of Tweets")
 
-plt.plot(daily.index, daily.hero, label="Hero")
-plt.plot(daily.index, daily.villain, label="Villain")
-plt.plot(daily.index, daily.victim, label="Victim")
-plt.legend()
+# Plot Villain Tweets
+axs[1, 0].plot(daily.index, daily.villain, label="Villain Tweets", color="black")
+axs[1, 0].set_xticks([
+    "2020-03-01 00:00:00+00:00",
+    "2020-04-01 00:00:00+00:00",
+    "2020-05-01 00:00:00+00:00",
+    "2020-06-01 00:00:00+00:00",
+    "2020-07-01 00:00:00+00:00",
+    "2020-08-01 00:00:00+00:00",
+    "2020-09-01 00:00:00+00:00",
+    "2020-10-01 00:00:00+00:00",
+    "2020-11-01 00:00:00+00:00",
+    "2020-12-01 00:00:00+00:00",
+    "2021-01-01 00:00:00+00:00",
+    "2021-02-01 00:00:00+00:00",
+])
+axs[1, 0].set_xticklabels([
+    "3-20", "4-20", "5-20", "6-20", "7-20", "8-20", "9-20", "10-20", "11-20", "12-20", "1-21", "2-21",
+])
+axs[1, 0].legend()
+axs[1, 0].set_ylim(0, MAX_TWEETS)
+axs[1, 0].set_xlabel("Date")
+axs[1, 0].set_ylabel("Number of Tweets")
+axs[1,1].set_axis_off()
+plt.savefig(start.RESULTS_DIR + "villain_over_time.png")
 
 # %%
