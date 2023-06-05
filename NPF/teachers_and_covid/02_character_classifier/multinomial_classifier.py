@@ -172,4 +172,29 @@ ensemble_scores = pd.DataFrame(ensemble_cv.cv_results_)
 ensemble_scores["model"] = "ensemble"
 # %%
 scores = pd.concat([rf_scores, svm_scores, nb_scores, cnn_scores, ensemble_scores])
-scores.to_csv(start.RESULTS_DIR + "multinomial_scores.csv")
+scores.to_csv(start.RESULTS_DIR + "multinomial_cross_validation_scores.csv")
+
+# %% Test
+
+svm_test_scores = pd.DataFrame(classification_report(testing_df.character_final, svm_predictions, output_dict=True)).reset_index().rename(columns={"index": "measure"})
+svm_test_scores["model"] = "svm"
+
+rf_test_scores = pd.DataFrame(classification_report(testing_df.character_final, rf_predictions, output_dict=True)).reset_index().rename(columns={"index": "measure"})
+rf_test_scores["model"] = "rf"
+
+nb_test_scores = pd.DataFrame(classification_report(testing_df.character_final, nb_predictions, output_dict=True)).reset_index().rename(columns={"index": "measure"})
+nb_test_scores["model"] = "nb"
+
+cnn_test_scores = pd.DataFrame(classification_report(testing_df.character_final, cnn_predictions, output_dict=True)).reset_index().rename(columns={"index": "measure"})
+cnn_test_scores["model"] = "cnn"
+
+ensemble_test_scores = pd.DataFrame(classification_report(testing_df.character_final, ensemble_predictions, output_dict=True)).reset_index().rename(columns={"index": "measure"})
+ensemble_test_scores["model"] = "ensemble"
+
+
+test_scores = pd.concat([svm_test_scores, rf_test_scores, nb_test_scores, cnn_test_scores, ensemble_test_scores])
+
+test_scores = test_scores[["model", "measure", "macro avg", "weighted avg", "Hero", "Victim", "Villain", "Other/None", "accuracy"]]
+
+test_scores.to_csv(start.RESULTS_DIR + "multinomial_testing_scores.csv")
+# %%
