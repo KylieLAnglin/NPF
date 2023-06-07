@@ -28,10 +28,21 @@ annotations = pd.read_csv(
     start.CLEAN_DIR + "annotations_characters.csv", index_col="unique_id"
 )
 annotations = annotations[
-    ["character", "character_final", "tweet_hero", "tweet_villain", "tweet_victim"]
+    [
+        "split",
+        "character",
+        "character_final",
+        "tweet_hero",
+        "tweet_villain",
+        "tweet_victim",
+    ]
 ]
 annotations = annotations.rename(
-    columns={"character": "tweet_character", "character_final": "tweet_character_final"}
+    columns={
+        "character": "tweet_character",
+        "character_final": "tweet_character_final",
+        "split": "tweet_split",
+    }
 )
 df = df.merge(
     annotations, how="left", left_index=True, right_index=True, indicator=True
@@ -68,8 +79,6 @@ def stem_string(text):
 
 df["tweet_text_clean"] = df.tweet_text_clean.apply(stem_string)
 df.sample()
-# %%
-
 
 # %% Doc-Term Matrix
 term_matrix = process_text.vectorize_text(
@@ -80,7 +89,6 @@ term_matrix.to_csv(start.CLEAN_DIR + "matrix.csv", index=True)
 
 matrix_annotations = term_matrix[term_matrix.index.isin(annotations.index)]
 matrix_annotations.to_csv(start.CLEAN_DIR + "matrix_annotations.csv", index=True)
-# TODO Check all below
 # %%
 lsa_matrix, word_weights = process_text.create_lsa_dfs(
     matrix=term_matrix, n_components=100
@@ -97,6 +105,7 @@ liwc = liwc.add_prefix("liwc_")
 liwc = liwc.rename(columns={"liwc_unique_id": "unique_id"})
 liwc = liwc.set_index("unique_id")
 liwc.to_csv(start.CLEAN_DIR + "liwc.csv", index=True)
+
 liwc_annotations = liwc[liwc.index.isin(annotations.index)]
 liwc_annotations.to_csv(start.CLEAN_DIR + "liwc_annotations.csv", index=True)
 
@@ -105,10 +114,10 @@ feature_df = df.merge(liwc, left_index=True, right_index=True, how="left")
 feature_df = feature_df.merge(lsa_matrix, left_index=True, right_index=True)
 feature_df = feature_df.merge(term_matrix, left_index=True, right_index=True)
 
-# %%
+
 feature_df.to_csv(start.MAIN_DIR + "data/clean/features.csv")
 
-# %%
+
 features_annotations = feature_df[feature_df.index.isin(annotations.index)]
 features_annotations = features_annotations[
     features_annotations.tweet_split != "validation"
