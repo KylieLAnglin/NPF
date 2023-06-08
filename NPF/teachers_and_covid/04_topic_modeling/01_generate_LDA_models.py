@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 import numpy as np
+import string
 
 import gensim
 from gensim.models.coherencemodel import CoherenceModel
@@ -17,7 +18,9 @@ from NPF.teachers_and_covid import start
 from NPF.library import process_text
 from NPF.library import topic_modeling
 
-
+PASSES = 5
+WORDS_TO_VIEW = 10
+STATE = 4205
 # %%
 df = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
 
@@ -83,7 +86,8 @@ len(grid)
 # %%
 
 pbar = tqdm(total=len(grid))
-for parameters in grid[0:1]:
+coherences = []
+for parameters in grid:
     model_name = (
         "topic_"
         + str(parameters["num_topics"])
@@ -104,14 +108,13 @@ for parameters in grid[0:1]:
     )
 
     corpus = [dictionary.doc2bow(doc) for doc in docs]
-    # TODO: Start here
 
     lda = gensim.models.LdaModel(
         corpus,
         id2word=dictionary,
         num_topics=parameters["num_topics"],
-        passes=1,
-        random_state=44,
+        passes=PASSES,
+        random_state=STATE,
         per_word_topics=True,
     )
 
@@ -122,24 +125,17 @@ for parameters in grid[0:1]:
         tweets_df=df,
         num_topics=parameters["num_topics"],
         folder_path=newpath,
+        num_words_to_view=WORDS_TO_VIEW,
+    )
+    coherences.append(
+        CoherenceModel(
+            model=lda, corpus=corpus, dictionary=dictionary, coherence="u_mass"
+        ).get_coherence()
     )
 pbar.close()
 
+models = pd.DataFrame(grid)
+models["coherence"] = coherences
 
-# %%
-# Filter out words that occur less than 20 documents, or more than 50% of the documents.
-
-# %%
-
-goodLdaModel = LdaModel(corpus=corpus, id2word=dictionary, iterations=50, num_topics=2)
-badLdaModel = LdaModel(corpus=corpus, id2word=dictionary, iterations=1, num_topics=2)
-
-# %%
-goodcm = CoherenceModel(
-    model=goodLdaModel, corpus=corpus, dictionary=dictionary, coherence="u_mass"
-)
-badcm = CoherenceModel(
-    model=badLdaModel, corpus=corpus, dictionary=dictionary, coherence="u_mass"
-)
-
+models.to_csv(start.RESULTS_DIR + "topic_models_coherence.csv")
 # %%
