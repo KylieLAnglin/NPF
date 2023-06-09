@@ -163,7 +163,6 @@ def process_text_nltk(
     lemma: bool = False,
     string_or_list: str = "string",
 ):
-
     tokens = nltk.word_tokenize(text)
 
     if lower_case:
@@ -239,14 +238,16 @@ def vectorize_text(
         )
 
     X = vec.fit_transform(docs)
-    matrix = pd.DataFrame(X.toarray(), columns=vec.get_feature_names_out(), index=df.index)
+    matrix = pd.DataFrame(
+        X.toarray(), columns=vec.get_feature_names_out(), index=df.index
+    )
 
-    print("Number of words: ", len(matrix.columns))
+    # print("Number of words: ", len(matrix.columns))
 
     if lsa:
         lsa_dfs = create_lsa_dfs(matrix=matrix, n_components=n_components)
         matrix = lsa_dfs.matrix
-        print("Number of dimensions: ", len(matrix.columns))
+        # print("Number of dimensions: ", len(matrix.columns))
 
     return matrix
 
@@ -254,11 +255,10 @@ def vectorize_text(
 def create_lsa_dfs(
     matrix: pd.DataFrame, n_components: int = 100, random_state: int = 100
 ):
-
     lsa = TruncatedSVD(n_components=n_components, random_state=random_state)
     lsa_fit = lsa.fit_transform(matrix)
     lsa_fit = Normalizer(copy=False).fit_transform(lsa_fit)
-    print(lsa_fit.shape)
+    # print(lsa_fit.shape)
 
     #  Each LSA component is a linear combo of words
     word_weights = pd.DataFrame(lsa.components_, columns=matrix.columns)
@@ -307,7 +307,7 @@ def what_words_matter(doc_term_matrix: pd.DataFrame, row1, row2, show_num: int =
     # divide by total word count
     new_df["total"] = new_df.sum(axis=1)
     totals = list(new_df.total)
-    print(totals)
+    # print(totals)
 
     new_df = new_df.div(new_df.total, axis=0).drop(columns=["total"])
 

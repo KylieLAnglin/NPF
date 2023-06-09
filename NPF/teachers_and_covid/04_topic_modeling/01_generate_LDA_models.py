@@ -20,20 +20,17 @@ from NPF.library import topic_modeling
 
 PASSES = 5
 WORDS_TO_VIEW = 10
-STATE = 4205
+SEED = 4205
+
+NO_BELOW = [0, 100, 500, 1000]
+NO_ABOVE = [0.25, 0.5, 1]
+NUM_TOPICS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 # %%
 df = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
-
-features = pd.read_csv(start.MAIN_DIR + "data/clean/features.csv")
-matrix = features[[col for col in features.columns if "term_" in col]]
-matrix.columns = [col.replace("term_", "") for col in matrix.columns]
-# %% Consider replacing
 docs = list(df.text)
 
 
 # %% Tokenize, lowercase
-
-
 def make_lower(text):
     return text.lower()
 
@@ -49,7 +46,7 @@ docs = [
     process_text.process_text_nltk(
         text,
         lower_case=True,
-        remove_punct=False,
+        remove_punct=True,
         remove_stopwords=True,
         lemma=True,
         string_or_list="list",
@@ -57,28 +54,23 @@ docs = [
     for text in df.tweet_text_clean
 ]
 
-
 # %%
-
-# Compute bigrams.
-
-# Add bigrams and trigrams to docs (only ones that appear 20 times or more).
-bigram = Phrases(docs, min_count=20)
-for idx in range(len(docs)):
-    for token in bigram[docs[idx]]:
-        if "_" in token:
-            # Token is a bigram, add to document.
-            docs[idx].append(token)
-
-# Create a dictionary representation of the documents.
+# remove https
+docs_clean = []
+for doc in docs:
+    new_doc = []
+    for term in doc:
+        if not "https" in term:
+            new_doc.append(term)
+    docs_clean.append(new_doc)
 
 
 # %%
 
 grid = []
-for no_below in [0, 50, 100]:
-    for no_above in [1, 0.5]:
-        for num_topics in [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]:
+for no_below in NO_BELOW:
+    for no_above in NO_ABOVE:
+        for num_topics in NUM_TOPICS:
             grid.append(
                 {"no_below": no_below, "no_above": no_above, "num_topics": num_topics}
             )
@@ -91,7 +83,7 @@ for parameters in grid:
     model_name = (
         "topic_"
         + str(parameters["num_topics"])
-        + "_no_below"
+        + "_no_below_"
         + str(parameters["no_below"])
         + "_no_above_"
         + str(parameters["no_above"])
@@ -114,7 +106,7 @@ for parameters in grid:
         id2word=dictionary,
         num_topics=parameters["num_topics"],
         passes=PASSES,
-        random_state=STATE,
+        random_state=SEED,
         per_word_topics=True,
     )
 

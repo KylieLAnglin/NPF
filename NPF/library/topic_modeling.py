@@ -37,7 +37,7 @@ def create_topic_tables(
         list_of_topic_tables,
     )
 
-    bigdf.to_csv(folder_path + "topics.csv")
+    bigdf.to_csv(folder_path + "topics.csv", index=False)
 
     lda.get_document_topics(corpus[0], minimum_probability=0)
 
@@ -54,7 +54,7 @@ def create_topic_tables(
         .reset_index()
         .merge(topic_probs_df, left_index=True, right_index=True)
     )
-    tweets_topics.to_csv(folder_path + "tweet_topics.csv")
+    tweets_topics.to_csv(folder_path + "tweet_topics.csv", index=False)
     token2id_df = (
         pd.DataFrame.from_dict(dictionary.token2id, orient="index")
         .reset_index()
@@ -72,4 +72,4 @@ def create_topic_tables(
     cols.insert(0, cols.pop(cols.index("term")))
     token_topics_df = token_topics_df[cols]
 
-    token_topics_df.to_csv(folder_path + "word_topics.csv")
+    token_topics_df.to_csv(folder_path + "word_topics.csv", index=False)
