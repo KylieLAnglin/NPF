@@ -11,6 +11,8 @@ SEED = 295
 
 NO_BELOW = [10, 100, 500, 1000]
 NO_ABOVE = [0.25, 0.5, 1.0]
+N_COMPONENTS_TO_VIEW = 25
+
 # %%
 
 # %%
@@ -27,7 +29,7 @@ for no_below, no_above in zip(NO_BELOW, NO_ABOVE):
 
     topic_names = []
     list_words = []
-    topic_list = list(range(0, 100))
+    topic_list = list(range(0, N_COMPONENTS_TO_VIEW))
     for topic in topic_list:
         words = list(
             topic_words.sort_values(by=str(topic), ascending=False).head(5).word
@@ -55,7 +57,7 @@ for no_below, no_above in zip(NO_BELOW, NO_ABOVE):
 
     topic_names = []
     list_tweets = []
-    topic_list = list(range(0, 100))
+    topic_list = list(range(0, N_COMPONENTS_TO_VIEW))
     for topic in topic_list:
         tweets = list(
             tweet_topic_assignments.sort_values(by=str(topic), ascending=False)

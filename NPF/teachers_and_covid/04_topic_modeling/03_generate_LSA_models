@@ -13,7 +13,7 @@ from NPF.library import process_text
 
 NO_BELOW = [10, 100, 500, 1000]
 NO_ABOVE = [0.25, 0.5, 1.0]
-
+N_COMPONENTS_TO_VIEW = 25
 # %%
 df = pd.read_csv(start.CLEAN_DIR + "tweets_relevant.csv")
 df = df.rename(columns={"text": "tweet_text"})
@@ -51,7 +51,7 @@ docs = [
         lower_case=True,
         remove_punct=True,
         remove_stopwords=True,
-        lemma=True,
+        lemma=False,
         string_or_list="list",
     )
     for text in df.tweet_text_clean
@@ -65,7 +65,6 @@ for doc in docs:
         if not "https" in term:
             new_doc.append(term)
     docs_clean.append(" ".join(new_doc))
-
 
 # %%
 grid = []
@@ -97,7 +96,7 @@ for parameters in grid:
         X.toarray(), columns=vec.get_feature_names_out(), index=df.index
     )
     lsa_matrix, word_weights = process_text.create_lsa_dfs(
-        matrix=matrix, n_components=100
+        matrix=matrix, n_components=N_COMPONENTS_TO_VIEW
     )
 
     tweets_mapping = df.merge(
