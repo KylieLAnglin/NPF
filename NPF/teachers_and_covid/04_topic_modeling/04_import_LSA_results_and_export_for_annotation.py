@@ -11,18 +11,24 @@ SEED = 295
 
 NO_BELOW = [10, 100, 500, 1000]
 NO_ABOVE = [0.25, 0.5, 1.0]
-N_COMPONENTS_TO_VIEW = 25
+N_COMPONENTS_TO_VIEW = 20
 
 # %%
+parameter_combos = []
+for no_below in NO_BELOW:
+    for no_above in NO_ABOVE:
+        parameter_combos.append({"no_below": no_below, "no_above": no_above})
+
 
 # %%
 
 # %% Word ratings
 big_words_df = pd.DataFrame()
 
-for no_below, no_above in zip(NO_BELOW, NO_ABOVE):
+for parameters in parameter_combos:
+    no_below = parameters["no_below"]
+    no_above = parameters["no_above"]
     folder_name = "lsa_no_below_" + str(no_below) + "_no_above_" + str(no_above)
-
     folder = start.RESULTS_DIR + "LSA/" + folder_name
     topic_words = pd.read_csv(folder + "/lsa_words.csv")
     topic_words = topic_words.rename(columns={"Unnamed: 0": "word"})
@@ -50,7 +56,9 @@ big_words_df_for_export.to_excel(
 
 big_tweets_df = pd.DataFrame()
 
-for no_below, no_above in zip(NO_BELOW, NO_ABOVE):
+for parameters in parameter_combos:
+    no_below = parameters["no_below"]
+    no_above = parameters["no_above"]
     folder_name = "lsa_no_below_" + str(no_below) + "_no_above_" + str(no_above)
     folder = start.RESULTS_DIR + "LSA/" + folder_name
     tweet_topic_assignments = pd.read_csv(folder + "/lsa_tweets.csv")
