@@ -84,6 +84,7 @@ df_topics.sort_values(by=["model", "topic"])
 df_topics.to_csv(start.CLEAN_DIR + "model_topic_ratings.csv")
 # %%
 
+# %%
 df_best_topics_score = df_topics[["model", "score"]].groupby("model").head(5)
 df_models_score = df_best_topics_score[["model", "score"]].groupby("model").mean()
 
@@ -104,7 +105,7 @@ df_models = df_models_coherence.merge(
 )
 df_models = df_models.merge(df_models_score, left_index=True, right_index=True)
 
-
+df_models.sort_values(by="score")
 # %%
 
 MODEL = "topic_20_no_below_100_no_above_1"  # top score, top coherence
@@ -127,7 +128,7 @@ top_tweets_lists = []
 for topic in topics:
     topic = topic.replace("Word_", "")
     tweets = tweets.sort_values(by=topic, ascending=False)
-    top_tweets_lists.append(list(tweets.head(250).text))
+    top_tweets_lists.append(list(tweets.head(1000).text))
 
 tweets_df = pd.DataFrame(top_tweets_lists).T
 tweets_df.to_excel(

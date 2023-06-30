@@ -71,6 +71,12 @@ df_topics
 df_topics.sort_values(by=["model", "topic"])
 
 # %%
+
+df_models_coherence = df_topics[["model", "coherence"]].groupby("model").mean()
+
+# %%
+
+
 df_best_topics_score = df_topics[["model", "score"]].groupby("model").head(5)
 df_models_score = df_best_topics_score[["model", "score"]].groupby("model").mean()
 
@@ -90,7 +96,7 @@ df_models = df_models_coherence.merge(
     df_models_specificity, left_index=True, right_index=True
 )
 df_models = df_models.merge(df_models_score, left_index=True, right_index=True)
-df_models
+df_models.sort_values(by="score")
 
 # %%
 
